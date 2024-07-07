@@ -4,8 +4,6 @@ import { FIELD_CORNER_RADIUS, FIELD_SIZE_X, FIELD_SIZE_Y, PUCK_SIZE } from '../c
 export class Hockey extends Scene {
     fieldContainer!: any;
     puckContainer!: any;
-    outerRect!: any;
-    innerRect!: any;
 
     preload() {}
 
@@ -18,9 +16,9 @@ export class Hockey extends Scene {
         const puck = this.add.circle(0, 0, PUCK_SIZE / 2, 0x333333);
         this.puckContainer = this.add.container(FIELD_SIZE_X / 2, FIELD_SIZE_Y / 2, puck);
         this.puckContainer.setSize(PUCK_SIZE, PUCK_SIZE);
-        this.physics.world.enable(this.puckContainer);
-        this.puckContainer.body.setVelocity(500, 500).setBounce(.5, .5).setCollideWorldBounds(true);
 
+        this.physics.world.enable([this.fieldContainer, this.puckContainer]);
+        this.puckContainer.body.setVelocity(500, 500).setBounce(.5, .5).setCollideWorldBounds(true);
 
         this.physics.add.existing(field, true);
         this.physics.add.existing(puck);
