@@ -8,28 +8,20 @@ export class Hockey extends Scene {
     outerRect!: any;
     innerRect!: any;
 
-    preload() {}
+    preload() {
+        this.load.json('hockeyField', 'assets/hockeyField.json');
+    }
 
     create() {
-        const field = this.add.graphics();
-        field.fillStyle(0xdddddd, 1).fillRoundedRect(0, 0, FIELD_SIZE_X, FIELD_SIZE_Y, FIELD_CORNER_RADIUS);
-        // this.fieldContainer = this.add.container(0, 0, field);
-        // this.fieldContainer.setSize(FIELD_SIZE_X, FIELD_SIZE_Y);
-
-        const puck = this.add.circle(0, 0, PUCK_SIZE / 2, 0x333333);
-        this.puckContainer = this.add.container(FIELD_SIZE_X / 2, FIELD_SIZE_Y / 2, puck);
-        this.puckContainer.setSize(PUCK_SIZE, PUCK_SIZE);
-        this.physics.world.enable(this.puckContainer);
+        this.cameras.main.centerOn(0, 0);
+        this.matter.world.setBounds(-FIELD_SIZE_X / 2, -FIELD_SIZE_Y / 2);
+        const hockeyBoxVerts = `0 0 0 ${FIELD_SIZE_Y} ${FIELD_SIZE_X} ${FIELD_SIZE_Y} ${FIELD_SIZE_X} 0`;
+        // const hockeyBoxPolygon = this.add.polygon(0, 0, hockeyBoxVerts, 0x00ff00, 0.2);
         
-        this.puckContainer.body
-            .setVelocity(400, 400)
-            .setBounce(.5, .5)
-            .setCollideWorldBounds(true)
-            .setBoundsRectangle(new Geom.Rectangle(0, 0, FIELD_SIZE_X, FIELD_SIZE_Y));
+        const hockeyField = this.cache.json.get('hockeyField');
+        this.matter.add.fromJSON(0, 0, hockeyField.star);
+        this.matter.add.gameObject(hockeyBoxPolygon, { shape: { type: 'fromVerts', verts: hockeyBoxVerts, flagInternal: false } });
 
-        const line = this.add.line(-100, -100, 200, 200, 300, 300, 0xff0000);
-        this.lineContainer = this.add.container(0, 0, line);
-        this.physics.world.enable(this.puckContainer);
     }
 
 }
@@ -39,10 +31,10 @@ const config = {
     type: Phaser.AUTO,
     width: FIELD_SIZE_X,
     height: FIELD_SIZE_Y,
-    // backgroundColor: '#dddddd',
+    backgroundColor: '#aaa',
     physics: {
-        default: 'arcade',
-        arcade: { debug: true },
+        default: 'matter',
+        matter: { debug: true },
     },
 };
 
