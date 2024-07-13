@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import Phaser from 'phaser';
 import { Events } from 'phaser';
-import { startHockey } from './scenes/Hockey';
-import { startTutorial } from './scenes/Tutorial';
+import { startHockey1 } from './scenes/Hockey1';
+import { startHockey2 } from './scenes/Hockey2';
+import { startHockey3 } from './scenes/Hockey3';
 
 @Component({
     selector: 'phaser-game',
@@ -11,8 +12,7 @@ import { startTutorial } from './scenes/Tutorial';
 })
 export class PhaserGame implements OnInit, OnDestroy {
     scene: Phaser.Scene;
-    tutorial: Phaser.Game = startTutorial('game-container');
-    // hockey: Phaser.Game = startHockey('game-container');
+    hockey: Phaser.Game = startHockey3('game-container');
     eventBus = new Events.EventEmitter();
 
     sceneCallback: (scene: Phaser.Scene) => void;
@@ -27,7 +27,6 @@ export class PhaserGame implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.tutorial.destroy(true);
-        // this.hockey.destroy(true);
+        this.hockey.destroy(true);
     }
 }
