@@ -1,4 +1,4 @@
-import { Curves, Game, Geom, Math, Physics, Scene } from 'phaser';
+import { Game, Geom, Math, Physics, Scene } from 'phaser';
 import { BLOCK_AMOUNT, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, CORNER_D } from '../constants';
 
 export class Hockey3 extends Scene {
