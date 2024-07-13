@@ -1,5 +1,5 @@
 import { Game, Geom, Math, Physics, Scene } from 'phaser';
-import { BLOCK_AMOUNT, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, CORNER_D } from '../constants';
+import { BLOCK_AMOUNT, CORNER_D, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
 
 export class Hockey3 extends Scene {
     constructor() {
@@ -28,7 +28,7 @@ export class Hockey3 extends Scene {
         createRadialBorder(radialBorderGroup, RADIAL_BLOCK_SHIFT - SIZE_X / 2, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 90);
         radialBorderGroup.getChildren().forEach(({ body }) => (body as any).setCircle(16).setImmovable(true));
 
-        const puck = this.physics.add.image(-100, -50, '').setCircle(6).setVelocity(-200, -80).setBounce(1);
+        const puck = this.physics.add.image(-100, -50, '').setCircle(PUCK_RADIUS).setVelocity(-200, -80).setBounce(1);
 
         this.physics.add.collider(puck, radialBorderGroup);
         this.physics.add.collider(puck, straightBorderGroup);
@@ -55,4 +55,4 @@ function createRadialBorder(group: Physics.Arcade.Group, x: number, y: number, s
     Phaser.Actions.PlaceOnCircle(borderBlock, { x, y, radius: CORNER_D } as Geom.Circle, Math.DegToRad(startAngle), Math.DegToRad(startAngle + 90));
 }
 
-export const startHockey3 = (parent: string) => new Game({ ...config, parent });
+export const startHockey = (parent: string) => new Game({ ...config, parent });
