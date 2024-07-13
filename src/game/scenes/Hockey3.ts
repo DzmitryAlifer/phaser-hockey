@@ -5,10 +5,7 @@ export class Hockey3 extends Scene {
     constructor() {
         super({
             key: 'Hockey3',
-            physics: {
-                arcade: { debug: true },
-                matter: { debug: true },
-            }
+            physics: { arcade: { debug: true }, matter: { debug: true } },
         });
     }
 
@@ -16,23 +13,36 @@ export class Hockey3 extends Scene {
         this.cameras.main.centerOn(0, 0);
         this.matter.world.setBounds(-SIZE_X / 2, -SIZE_Y / 2);
 
-        const puck = this.physics.add.image(-100, -40, '').setCircle(6).setVelocity(-200, -50).setBounce(0.99);
+        const straightBorderGroup = this.physics.add.group();
+        const straightBorder1 = this.add.rectangle(0, -SIZE_Y / 2, SIZE_X, 1);
+        const straightBorder2 = this.add.rectangle(0, SIZE_Y / 2, SIZE_X, 1);
+        const straightBorder3 = this.add.rectangle(-SIZE_X / 2, 0, 1, SIZE_Y);
+        const straightBorder4 = this.add.rectangle(SIZE_X / 2, 0, 1, SIZE_Y);
         
-        const radialBorder = this.physics.add.group({ defaultKey: 'radialBorder' });
-        createRadialBorder(radialBorder, RADIAL_BLOCK_SHIFT - SIZE_X / 2, RADIAL_BLOCK_SHIFT - SIZE_Y / 2, 180);
-        createRadialBorder(radialBorder, SIZE_X / 2 - RADIAL_BLOCK_SHIFT, RADIAL_BLOCK_SHIFT - SIZE_Y / 2, 270);
-        createRadialBorder(radialBorder, SIZE_X / 2 - RADIAL_BLOCK_SHIFT, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 0);
-        createRadialBorder(radialBorder, RADIAL_BLOCK_SHIFT - SIZE_X / 2, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 90);
+        straightBorderGroup.add(straightBorder1).add(straightBorder2).add(straightBorder3).add(straightBorder4);
+
+        for (const straightBorder of straightBorderGroup.getChildren()) {
+            (straightBorder.body as any).setImmovable(true);
+        }
+
+        const puck = this.physics.add.image(-100, -50, '').setCircle(6).setVelocity(-200, -80).setBounce(1);
+
+        const radialBorderGroup = this.physics.add.group({ defaultKey: 'radialBorder' });
+        createRadialBorder(radialBorderGroup, RADIAL_BLOCK_SHIFT - SIZE_X / 2, RADIAL_BLOCK_SHIFT - SIZE_Y / 2, 180);
+        createRadialBorder(radialBorderGroup, SIZE_X / 2 - RADIAL_BLOCK_SHIFT, RADIAL_BLOCK_SHIFT - SIZE_Y / 2, 270);
+        createRadialBorder(radialBorderGroup, SIZE_X / 2 - RADIAL_BLOCK_SHIFT, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 0);
+        createRadialBorder(radialBorderGroup, RADIAL_BLOCK_SHIFT - SIZE_X / 2, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 90);
         
-        const radialBorderBlocks = radialBorder.getChildren();
+        const radialBorderBlocks = radialBorderGroup.getChildren();
         
         for (let i = 0; i < radialBorderBlocks.length; i++) {
             const borderBlock = radialBorderBlocks.at(i) as any;
             borderBlock.angle = i * 90 / BLOCK_AMOUNT;
-            (borderBlock.body as any).setImmovable(true);
+            borderBlock.body.setImmovable(true);
         }
 
-        this.physics.add.collider(puck, radialBorder);
+        this.physics.add.collider(puck, radialBorderGroup);
+        this.physics.add.collider(puck, straightBorderGroup);
     }
 
 }
