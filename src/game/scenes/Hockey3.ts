@@ -1,5 +1,5 @@
 import { Curves, Game, Geom, Math, Physics, Scene } from 'phaser';
-import { RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, CORNER_D } from '../constants';
+import { BLOCK_AMOUNT, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, CORNER_D } from '../constants';
 
 export class Hockey3 extends Scene {
     constructor() {
@@ -17,14 +17,18 @@ export class Hockey3 extends Scene {
         this.matter.world.setBounds(-SIZE_X / 2, -SIZE_Y / 2);
 
         const puck = this.physics.add.image(-100, -40, '').setCircle(6).setVelocity(-200, -50).setBounce(0.99);
+        
         const radialBorder = this.physics.add.group({ defaultKey: 'radialBorder' });
         createRadialBorder(radialBorder, RADIAL_BLOCK_SHIFT - SIZE_X / 2, RADIAL_BLOCK_SHIFT - SIZE_Y / 2, 180);
         createRadialBorder(radialBorder, SIZE_X / 2 - RADIAL_BLOCK_SHIFT, RADIAL_BLOCK_SHIFT - SIZE_Y / 2, 270);
         createRadialBorder(radialBorder, SIZE_X / 2 - RADIAL_BLOCK_SHIFT, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 0);
         createRadialBorder(radialBorder, RADIAL_BLOCK_SHIFT - SIZE_X / 2, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 90);
-
-        for (const borderBlock of radialBorder.getChildren()) {
-            (borderBlock as any).setCircle(16);
+        
+        const radialBorderBlocks = radialBorder.getChildren();
+        
+        for (let i = 0; i < radialBorderBlocks.length; i++) {
+            const borderBlock = radialBorderBlocks.at(i) as any;
+            borderBlock.angle = i * 90 / BLOCK_AMOUNT;
             (borderBlock.body as any).setImmovable(true);
         }
 
@@ -48,7 +52,7 @@ const config = {
 };
 
 function createRadialBorder(group: Physics.Arcade.Group, x: number, y: number, startAngle: number): void {
-    const borderBlock = group.createMultiple({ quantity: 30, key: group.defaultKey, frame: 0 });
+    const borderBlock = group.createMultiple({ quantity: BLOCK_AMOUNT, key: group.defaultKey, frame: 0 });
     Phaser.Actions.PlaceOnCircle(borderBlock, { x, y, radius: CORNER_D } as Geom.Circle, Math.DegToRad(startAngle), Math.DegToRad(startAngle + 90));
 }
 
