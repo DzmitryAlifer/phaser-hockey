@@ -1,12 +1,17 @@
 import { Game, Geom, Math, Physics, Scene } from 'phaser';
-import { BLOCK_AMOUNT, CORNER_D, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
+import { BLOCK_AMOUNT, BORDER_BLOCK_RADIUS, CORNER_D, CORNER_DRAW_R, CORNER_R, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
 
 export class Hockey3 extends Scene {
     constructor() {
         super({
             key: 'Hockey3',
-            physics: { arcade: { debug: true }, matter: { debug: true } },
+            physics: { arcade: { debug: false }, matter: { debug: true } },
         });
+    }
+
+    preload() {
+        this.load.image('rink', 'assets/rink_texture.jpg');
+        this.load.image('puck', 'assets/puck.png');
     }
 
     create() {
@@ -28,7 +33,20 @@ export class Hockey3 extends Scene {
         createRadialBorder(radialBorderGroup, RADIAL_BLOCK_SHIFT - SIZE_X / 2, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 90);
         radialBorderGroup.getChildren().forEach(({ body }) => (body as any).setCircle(16).setImmovable(true));
 
-        const puck = this.physics.add.image(-100, -50, '').setCircle(PUCK_RADIUS).setVelocity(-200, -80).setBounce(1);
+        const image = this.add.image(-SIZE_X / 2, -SIZE_Y / 2, 'rink');
+        image.setOrigin(0, 0);
+
+        const graphics = this.add.graphics();
+        graphics.lineStyle(4, 0xffff00, 1);
+        graphics.arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, Math.DegToRad(180), Math.DegToRad(270));
+        graphics.arc(SIZE_X / 2 - CORNER_D + 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, Math.DegToRad(270), Math.DegToRad(360));
+        graphics.arc(SIZE_X / 2 - CORNER_D + 8, SIZE_Y / 2 - CORNER_D + 8, CORNER_DRAW_R, Math.DegToRad(0), Math.DegToRad(90));
+        graphics.arc(CORNER_D - SIZE_X / 2 - 8, SIZE_Y / 2 - CORNER_D + 8, CORNER_DRAW_R, Math.DegToRad(90), Math.DegToRad(180));
+        graphics.arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, Math.DegToRad(180), Math.DegToRad(270));
+        graphics.strokePath();
+
+        const puckImg = this.physics.add.image(-100, -50, 'puck');
+        const puck = puckImg.setCircle(PUCK_RADIUS).setVelocity(-200, -80).setBounce(1);
 
         this.physics.add.collider(puck, radialBorderGroup);
         this.physics.add.collider(puck, straightBorderGroup);
