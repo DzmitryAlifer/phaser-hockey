@@ -49,4 +49,4 @@ const config = {
     },
 };
 
-export const startGame = (parent: string) => new Game({ ...config, parent });
+export const startHockey = (parent: string) => new Game({ ...config, parent });
