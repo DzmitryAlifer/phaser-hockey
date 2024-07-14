@@ -3,7 +3,7 @@ import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_
 
 export class Hockey3 extends Scene {
     constructor() {
-        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
+        super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
     }
 
     preload() {
@@ -47,7 +47,7 @@ export class Hockey3 extends Scene {
             .arc(SIZE_X / 2 - CORNER_D + 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_270, DEGREE_360)
             .arc(SIZE_X / 2 - CORNER_D + 8, SIZE_Y / 2 - CORNER_D + 8, CORNER_DRAW_R, 0, DEGREE_90)
             .arc(CORNER_D - SIZE_X / 2 - 8, SIZE_Y / 2 - CORNER_D + 8, CORNER_DRAW_R, DEGREE_90, DEGREE_180)
-            .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_270)
+            .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_180)
             .strokePath()
             // red lines
             .lineBetween(0, -SIZE_Y / 2, 0, -CIRCLE_RADIUS - 2)
