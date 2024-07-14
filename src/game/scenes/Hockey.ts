@@ -1,12 +1,9 @@
 import { Game, Geom, Math, Physics, Scene } from 'phaser';
-import { BLOCK_AMOUNT, BORDER_BLOCK_RADIUS, CORNER_D, CORNER_DRAW_R, CORNER_R, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
+import { BLOCK_AMOUNT, CORNER_D, CORNER_DRAW_R, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
 
 export class Hockey3 extends Scene {
     constructor() {
-        super({
-            key: 'Hockey3',
-            physics: { arcade: { debug: false }, matter: { debug: true } },
-        });
+        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
     }
 
     preload() {
@@ -45,8 +42,11 @@ export class Hockey3 extends Scene {
         graphics.arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, Math.DegToRad(180), Math.DegToRad(270));
         graphics.strokePath();
 
-        const puckImg = this.physics.add.image(-100, -50, 'puck');
-        const puck = puckImg.setCircle(PUCK_RADIUS).setVelocity(-200, -80).setBounce(1);
+        const puck = this.physics.add.image(-100, -50, 'puck')
+            .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
+            .setCircle(PUCK_IMG_SIZE / 2)
+            .setVelocity(-200, -80)
+            .setBounce(.9);
 
         this.physics.add.collider(puck, radialBorderGroup);
         this.physics.add.collider(puck, straightBorderGroup);

@@ -1,4 +1,5 @@
 export const PUCK_RADIUS = 4;
+export const PUCK_IMG_SIZE = 32;
 export const SIZE_Y = 400;
 export const SIZE_X = SIZE_Y * 2;
 export const CORNER_R = 55;
