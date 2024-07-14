@@ -45,7 +45,7 @@ export class Hockey3 extends Scene {
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
             .setCircle(PUCK_IMG_SIZE / 2)
             .setVelocity(-200, -80)
-            .setBounce(.9);
+            .setBounce(.8);
 
         this.physics.add.collider(puck, radialBorderGroup);
         this.physics.add.collider(puck, straightBorderGroup);
