@@ -20,7 +20,6 @@ export class Hockey extends Scene {
 
     create() {
         this.cameras.main.centerOn(0, 0);
-        this.matter.world.setBounds(-SIZE_X / 2, -SIZE_Y / 2);
 
         const straightBorderGroup = this.physics.add.group();
         const straightBorder1 = this.add.rectangle(0, -SIZE_Y / 2, SIZE_X, 1);
@@ -37,7 +36,7 @@ export class Hockey extends Scene {
         createRadialBorder(radialBorderGroup, RADIAL_BLOCK_SHIFT - SIZE_X / 2, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 90);
         radialBorderGroup.getChildren().forEach(({ body }) => (body as any).setCircle(16).setImmovable(true));
 
-        this.add.image(-SIZE_X / 2, -SIZE_Y / 2, 'rink').setOrigin(0, 0);
+        const rinkImage = this.add.image(-SIZE_X / 2, -SIZE_Y / 2, 'rink').setOrigin(0, 0);
 
         const graphicsBlue = this.add.graphics({ fillStyle: { color: ICE_BLUE, alpha: ICE_ALPHA } }).lineStyle(4, ICE_BLUE, ICE_ALPHA);
         const graphicsRed = this.add.graphics({ fillStyle: { color: ICE_RED, alpha: ICE_ALPHA } }).lineStyle(4, ICE_RED, ICE_ALPHA);
@@ -48,14 +47,7 @@ export class Hockey extends Scene {
             .lineBetween(-BLUE_LINE_X_OFFSET, -SIZE_Y / 2, -BLUE_LINE_X_OFFSET, SIZE_Y / 2)
             .lineBetween(BLUE_LINE_X_OFFSET, -SIZE_Y / 2, BLUE_LINE_X_OFFSET, SIZE_Y / 2);
 
-        graphicsRed
-            // outter shape
-            .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_270)
-            .arc(SIZE_X / 2 - CORNER_D + 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_270, DEGREE_360)
-            .arc(SIZE_X / 2 - CORNER_D + 8, SIZE_Y / 2 - CORNER_D + 8, CORNER_DRAW_R, 0, DEGREE_90)
-            .arc(CORNER_D - SIZE_X / 2 - 8, SIZE_Y / 2 - CORNER_D + 8, CORNER_DRAW_R, DEGREE_90, DEGREE_180)
-            .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_180)
-            .strokePath()
+        drawFieldArc(graphicsRed)
             // red lines
             .lineBetween(0, -SIZE_Y / 2 + 3, 0, -CIRCLE_RADIUS - 2)
             .lineBetween(0, -CIRCLE_RADIUS + 2, 0, -FACE_OFF_SPOT_SIZE)
@@ -80,13 +72,15 @@ export class Hockey extends Scene {
             // right net
             .lineBetween(NET_LINE_X_OFFSET + 2, -NET_SIZE, NET_LINE_X_OFFSET + 16, -NET_SIZE + 4)
             .lineBetween(NET_LINE_X_OFFSET + 2, NET_SIZE, NET_LINE_X_OFFSET + 16, NET_SIZE - 4)
-            .lineBetween(NET_LINE_X_OFFSET + 16, -NET_SIZE + 3, NET_LINE_X_OFFSET + 16, NET_SIZE - 3)
-            
+            .lineBetween(NET_LINE_X_OFFSET + 16, -NET_SIZE + 3, NET_LINE_X_OFFSET + 16, NET_SIZE - 3);
 
         drawRedFaceOffCircle(graphicsRed, -SIZE_X / 3.2, -SIZE_Y / 4);
         drawRedFaceOffCircle(graphicsRed, -SIZE_X / 3.2, SIZE_Y / 4);
         drawRedFaceOffCircle(graphicsRed, SIZE_X / 3.2, -SIZE_Y / 4);
         drawRedFaceOffCircle(graphicsRed, SIZE_X / 3.2, SIZE_Y / 4);
+
+        const fieldMask = drawFieldArc(this.add.graphics()).fillPath().createGeometryMask();
+        rinkImage.setMask(fieldMask);
 
         this.puck = this.physics.add.image(0, 0, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
@@ -149,6 +143,16 @@ function drawRedFaceOffCircle(graphics: GameObjects.Graphics, x: number, y: numb
         .lineBetween(x + 10, y - CIRCLE_RADIUS, x + 10, y - CIRCLE_RADIUS - 12)
         .lineBetween(x - 10, y + CIRCLE_RADIUS, x - 10, y + CIRCLE_RADIUS + 12)
         .lineBetween(x + 10, y + CIRCLE_RADIUS, x + 10, y + CIRCLE_RADIUS + 12);
+}
+
+function drawFieldArc(graphics: GameObjects.Graphics): GameObjects.Graphics {
+    return graphics
+        .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_270)
+        .arc(SIZE_X / 2 - CORNER_D + 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_270, DEGREE_360)
+        .arc(SIZE_X / 2 - CORNER_D + 8, SIZE_Y / 2 - CORNER_D + 8, CORNER_DRAW_R, 0, DEGREE_90)
+        .arc(CORNER_D - SIZE_X / 2 - 8, SIZE_Y / 2 - CORNER_D + 8, CORNER_DRAW_R, DEGREE_90, DEGREE_180)
+        .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_180)
+        .strokePath();
 }
 
 export const startHockey = (parent: string) => new Game({ ...config, parent });
