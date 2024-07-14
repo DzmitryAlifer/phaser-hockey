@@ -1,10 +1,14 @@
 
-<mat-slider min="-400" max="400" step="1">
-    <div>X velocity: {{ velocityX }}</div>
-    <input matSliderThumb value="0" [(ngModel)]="velocityX">
-</mat-slider>
-<mat-slider min="-400" max="400" step="1">
-    <div>Y velocity: {{ velocityY }}</div>
-    <input matSliderThumb value="0" [(ngModel)]="velocityY">
-</mat-slider>
+<div>
+    <mat-slider [min]="-VELOCITY_LIMIT" [max]="VELOCITY_LIMIT" step="10">
+        <div>X velocity: {{ velocityX }}</div>
+        <input matSliderThumb value="0" [(ngModel)]="velocityX">
+    </mat-slider>
+</div>
+<div>
+    <mat-slider [min]="-VELOCITY_LIMIT" [max]="VELOCITY_LIMIT" step="10">
+        <div>Y velocity: {{ velocityY }}</div>
+        <input matSliderThumb value="0" [(ngModel)]="velocityY">
+    </mat-slider>
+</div>
 <button mat-raised-button (click)="restart()">Start</button>

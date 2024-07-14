@@ -8,13 +8,21 @@ import { restartHockey, startHockey } from './scenes/Hockey';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+const VELOCITY_LIMIT = 1000;
+
 @Component({
     selector: 'phaser-game',
     templateUrl: './phaser-game.component.html',
     imports: [CommonModule, FormsModule, MatButtonModule, MatFormFieldModule, MatSliderModule],
+    styles: [`
+        mat-slider {
+            width: 500px;
+        }
+    `],
     standalone: true,
 })
 export class PhaserGame implements OnInit, OnDestroy {
+    VELOCITY_LIMIT = VELOCITY_LIMIT;
     scene: Phaser.Scene;
     eventBus = new Events.EventEmitter();
     velocityX = 0;

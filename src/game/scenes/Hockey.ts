@@ -11,7 +11,7 @@ export class Hockey extends Scene {
     private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
 
     constructor() {
-        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
+        super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
     }
 
     preload() {
