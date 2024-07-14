@@ -45,7 +45,9 @@ export class Hockey3 extends Scene {
             .lineBetween(0, -SIZE_Y / 2, 0, SIZE_Y / 2)
             .lineBetween(-NET_LINE_X_OFFSET, -SIZE_Y / 2, -NET_LINE_X_OFFSET, SIZE_Y / 2)
             .lineBetween(NET_LINE_X_OFFSET, -SIZE_Y / 2, NET_LINE_X_OFFSET, SIZE_Y / 2)
-            .beginPath().arc(-NET_LINE_X_OFFSET, 0, CIRCLE_RADIUS / 2, DEGREE_270, DEGREE_90).strokePath()
+            // goalie half circles
+            .beginPath().arc(-NET_LINE_X_OFFSET + 2, 0, CIRCLE_RADIUS / 2, DEGREE_270, DEGREE_90).strokePath()
+            .beginPath().arc(NET_LINE_X_OFFSET - 2, 0, CIRCLE_RADIUS / 2, DEGREE_90, DEGREE_270).strokePath()
 
         drawRedFaceOffCircle(graphics, -SIZE_X / 3.5, -SIZE_Y / 4);
         drawRedFaceOffCircle(graphics, -SIZE_X / 3.5, SIZE_Y / 4);
