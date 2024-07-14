@@ -1,8 +1,7 @@
 import { Game, GameObjects, Geom, Math, Physics, Scene, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_SIZE, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
-import { keyframes } from '@angular/animations';
 
-export class Hockey3 extends Scene {
+export class Hockey extends Scene {
     private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_SIZE + 3, -NET_LINE_X_OFFSET - 2, NET_SIZE - 3);
     private readonly goalLineRight = new Geom.Line(NET_LINE_X_OFFSET + 2, -NET_SIZE + 3, NET_LINE_X_OFFSET + 2, NET_SIZE - 3);
     private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
@@ -111,6 +110,7 @@ export class Hockey3 extends Scene {
 
         if (isScoreToLeftNet || isScoreToRightNet) {
             this.puck.setVelocity(0, 0);
+            // this.scene.restart();
         }
     }
 }
@@ -119,7 +119,7 @@ const config = {
     type: Phaser.AUTO,
     width: SIZE_X + 100,
     height: SIZE_Y + 100,
-    scene: Hockey3,
+    scene: Hockey,
     physics: {
         default: 'matter',
         matter: {
