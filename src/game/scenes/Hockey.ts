@@ -44,8 +44,8 @@ export class Hockey extends Scene {
         
         graphicsBlue
             .arc(0, 0, CIRCLE_RADIUS, 0, DEGREE_360).strokePath().fillCircle(0, 0, FACE_OFF_SPOT_SIZE)
-            .lineBetween(-BLUE_LINE_X_OFFSET, -SIZE_Y / 2, -BLUE_LINE_X_OFFSET, SIZE_Y / 2)
-            .lineBetween(BLUE_LINE_X_OFFSET, -SIZE_Y / 2, BLUE_LINE_X_OFFSET, SIZE_Y / 2);
+            .lineBetween(-BLUE_LINE_X_OFFSET, -SIZE_Y / 2 + 3, -BLUE_LINE_X_OFFSET, SIZE_Y / 2 - 3)
+            .lineBetween(BLUE_LINE_X_OFFSET, -SIZE_Y / 2 + 3, BLUE_LINE_X_OFFSET, SIZE_Y / 2 - 3);
 
         drawFieldArc(graphicsRed)
             // red lines
@@ -85,7 +85,7 @@ export class Hockey extends Scene {
         this.puck = this.physics.add.image(0, 0, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
             .setCircle(PUCK_IMG_SIZE / 2)
-            .setVelocity(-200, 0)
+            .setVelocity(-200, -80)
             .setBounce(0.8);
 
         this.physics.add.collider(this.puck, radialBorderGroup);
@@ -130,7 +130,7 @@ const config = {
 };
 
 function createRadialBorder(group: Physics.Arcade.Group, x: number, y: number, startAngle: number): void {
-    const borderBlock = group.createMultiple({ quantity: BLOCK_AMOUNT, key: group.defaultKey, frame: 0 });
+    const borderBlock = group.createMultiple({ quantity: BLOCK_AMOUNT, key: group.defaultKey, frame: 0, visible: false });
     Phaser.Actions.PlaceOnCircle(borderBlock, { x, y, radius: CORNER_D } as Geom.Circle, Math.DegToRad(startAngle), Math.DegToRad(startAngle + 90));
 }
 
