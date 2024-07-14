@@ -20,6 +20,8 @@ export const BLUE_LINE_X_OFFSET = SIZE_X / 8;
 export const FACE_OFF_SPOT_SIZE = 5;
 export const BLOCK_AMOUNT = 12;
 
+export const PLAYER_SIZE = 12;
+
 export const DEGREE_90 = Math.DegToRad(90);
 export const DEGREE_180 = Math.DegToRad(180);
 export const DEGREE_270 = Math.DegToRad(270);

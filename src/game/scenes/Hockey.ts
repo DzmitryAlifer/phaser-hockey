@@ -1,5 +1,5 @@
 import { Game, GameObjects, Geom, Math, Physics, Scene, Scenes, Types } from 'phaser';
-import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS } from '../constants';
+import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE } from '../constants';
 
 export let hockeyScene: Scenes.ScenePlugin;
 let velocityX = 0;
@@ -18,13 +18,14 @@ export class Hockey extends Scene {
         this.load.image('rink', 'assets/rink_texture.jpg');
         this.load.image('puck', 'assets/puck.png');
         this.load.image('net', 'assets/net2.png');
+        this.load.image('player', 'assets/player-idle-tr.png');
         hockeyScene = this.scene;
     }
 
     create() {
         this.cameras.main.centerOn(0, 0);
 
-        // PHYSICS
+        // PHYSICS - Immovable
         const straightBorderGroup = this.physics.add.group();
         const straightBorder1 = this.add.rectangle(0, -SIZE_Y / 2, SIZE_X, 1);
         const straightBorder2 = this.add.rectangle(0, SIZE_Y / 2, SIZE_X, 1);
@@ -96,11 +97,20 @@ export class Hockey extends Scene {
         const fieldMask = drawFieldArc(this.add.graphics()).fillPath().createGeometryMask();
         rinkImage.setMask(fieldMask);
 
+
+        // PHISICS - Movable
         this.puck = this.physics.add.image(0, 0, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
             .setCircle(PUCK_IMG_SIZE / 2)
             .setVelocity(velocityX, velocityY)
             .setBounce(0.8);
+        
+        const playerImg = this.physics.add.image(-200, 0, 'player');
+        const player = playerImg
+            .setScale(0.8)
+            .setCircle(PLAYER_SIZE)
+            .setVelocity(velocityX/2, velocityY/2)
+            .setBounce(0.4);
 
         this.physics.add.collider(this.puck, radialBorderGroup);
         this.physics.add.collider(this.puck, straightBorderGroup);
