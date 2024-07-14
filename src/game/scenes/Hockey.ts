@@ -1,11 +1,11 @@
 import { Game, GameObjects, Geom, Math, Physics, Scene, Scenes, Types } from 'phaser';
-import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_SIZE, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
+import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
 
 export let hockeyScene: Scenes.ScenePlugin;
 
 export class Hockey extends Scene {
-    private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_SIZE + 3, -NET_LINE_X_OFFSET - 2, NET_SIZE - 3);
-    private readonly goalLineRight = new Geom.Line(NET_LINE_X_OFFSET + 2, -NET_SIZE + 3, NET_LINE_X_OFFSET + 2, NET_SIZE - 3);
+    private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_HALF_WIDTH + 3, -NET_LINE_X_OFFSET - 2, NET_HALF_WIDTH - 3);
+    private readonly goalLineRight = new Geom.Line(NET_LINE_X_OFFSET + 2, -NET_HALF_WIDTH + 3, NET_LINE_X_OFFSET + 2, NET_HALF_WIDTH - 3);
     private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
 
     constructor() {
@@ -15,12 +15,14 @@ export class Hockey extends Scene {
     preload() {
         this.load.image('rink', 'assets/rink_texture.jpg');
         this.load.image('puck', 'assets/puck.png');
+        this.load.image('net', 'assets/net2.png');
         hockeyScene = this.scene;
     }
 
     create() {
         this.cameras.main.centerOn(0, 0);
 
+        // PHYSICS
         const straightBorderGroup = this.physics.add.group();
         const straightBorder1 = this.add.rectangle(0, -SIZE_Y / 2, SIZE_X, 1);
         const straightBorder2 = this.add.rectangle(0, SIZE_Y / 2, SIZE_X, 1);
@@ -36,11 +38,15 @@ export class Hockey extends Scene {
         createRadialBorder(radialBorderGroup, RADIAL_BLOCK_SHIFT - SIZE_X / 2, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 90);
         radialBorderGroup.getChildren().forEach(({ body }) => (body as any).setCircle(16).setImmovable(true));
 
+        const netGroup = this.physics.add.group({ defaultKey: 'nets' });
+        const netBorder = this.add.line(0, -SIZE_Y / 2, SIZE_X, 1);
+
+        // DRAWING
         const rinkImage = this.add.image(-SIZE_X / 2, -SIZE_Y / 2, 'rink').setOrigin(0, 0);
 
         const graphicsBlue = this.add.graphics({ fillStyle: { color: ICE_BLUE, alpha: ICE_ALPHA } }).lineStyle(4, ICE_BLUE, ICE_ALPHA);
         const graphicsRed = this.add.graphics({ fillStyle: { color: ICE_RED, alpha: ICE_ALPHA } }).lineStyle(4, ICE_RED, ICE_ALPHA);
-        const graphicsBlack = this.add.graphics({ fillStyle: { color: ICE_RED, alpha: ICE_ALPHA } }).lineStyle(4, NET_COLOR);
+        const graphicsNets = this.add.graphics({ fillStyle: { color: ICE_RED, alpha: ICE_ALPHA } }).lineStyle(4, NET_COLOR);
         
         graphicsBlue
             .arc(0, 0, CIRCLE_RADIUS, 0, DEGREE_360).strokePath().fillCircle(0, 0, FACE_OFF_SPOT_SIZE)
@@ -64,15 +70,17 @@ export class Hockey extends Scene {
             .fillCircle(-BLUE_LINE_X_OFFSET + SIZE_X / 30, SIZE_Y / 4, FACE_OFF_SPOT_SIZE)
             .fillCircle(BLUE_LINE_X_OFFSET - SIZE_X / 30, SIZE_Y / 4, FACE_OFF_SPOT_SIZE);
 
-        graphicsBlack
+        graphicsNets
             // left net
-            .lineBetween(-NET_LINE_X_OFFSET - 2, -NET_SIZE, -NET_LINE_X_OFFSET - 16, -NET_SIZE + 4)
-            .lineBetween(-NET_LINE_X_OFFSET - 2, NET_SIZE, -NET_LINE_X_OFFSET - 16, NET_SIZE - 4)
-            .lineBetween(-NET_LINE_X_OFFSET - 16, -NET_SIZE + 3, -NET_LINE_X_OFFSET - 16, NET_SIZE - 3)
+            .lineBetween(-NET_LINE_X_OFFSET, -NET_HALF_WIDTH, -NET_LINE_X_OFFSET - NET_DEPTH, -NET_HALF_WIDTH + 3)
+            .lineBetween(-NET_LINE_X_OFFSET, NET_HALF_WIDTH, -NET_LINE_X_OFFSET - NET_DEPTH, NET_HALF_WIDTH - 3)
+            .lineBetween(-NET_LINE_X_OFFSET - NET_DEPTH, -NET_HALF_WIDTH + 3, -NET_LINE_X_OFFSET - NET_DEPTH, NET_HALF_WIDTH - 3)
+            .lineBetween(-NET_LINE_X_OFFSET, -NET_HALF_WIDTH, -NET_LINE_X_OFFSET, NET_HALF_WIDTH)
             // right net
-            .lineBetween(NET_LINE_X_OFFSET + 2, -NET_SIZE, NET_LINE_X_OFFSET + 16, -NET_SIZE + 4)
-            .lineBetween(NET_LINE_X_OFFSET + 2, NET_SIZE, NET_LINE_X_OFFSET + 16, NET_SIZE - 4)
-            .lineBetween(NET_LINE_X_OFFSET + 16, -NET_SIZE + 3, NET_LINE_X_OFFSET + 16, NET_SIZE - 3);
+            .lineBetween(NET_LINE_X_OFFSET + 2, -NET_HALF_WIDTH, NET_LINE_X_OFFSET + NET_DEPTH, -NET_HALF_WIDTH + 3)
+            .lineBetween(NET_LINE_X_OFFSET + 2, NET_HALF_WIDTH, NET_LINE_X_OFFSET + NET_DEPTH, NET_HALF_WIDTH - 3)
+            .lineBetween(NET_LINE_X_OFFSET + NET_DEPTH, -NET_HALF_WIDTH + 3, NET_LINE_X_OFFSET + NET_DEPTH, NET_HALF_WIDTH - 3)
+            .lineBetween(NET_LINE_X_OFFSET, NET_HALF_WIDTH, NET_LINE_X_OFFSET, -NET_HALF_WIDTH);
 
         drawRedFaceOffCircle(graphicsRed, -SIZE_X / 3.2, -SIZE_Y / 4);
         drawRedFaceOffCircle(graphicsRed, -SIZE_X / 3.2, SIZE_Y / 4);
@@ -90,6 +98,7 @@ export class Hockey extends Scene {
 
         this.physics.add.collider(this.puck, radialBorderGroup);
         this.physics.add.collider(this.puck, straightBorderGroup);
+        this.physics.add.collider(this.puck, netGroup);
     }
 
     override update() {
