@@ -1,5 +1,6 @@
 import { Game, GameObjects, Geom, Math, Physics, Scene, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_SIZE, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
+import { keyframes } from '@angular/animations';
 
 export class Hockey3 extends Scene {
     private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_SIZE + 3, -NET_LINE_X_OFFSET - 2, NET_SIZE - 3);
@@ -97,12 +98,19 @@ export class Hockey3 extends Scene {
 
     override update() {
         const puckPoint = new Geom.Point(this.puck.x, this.puck.y);
-        if (Phaser.Geom.Intersects.PointToLine(puckPoint, this.goalLineLeft, 4)) {
-           console.log('GOAL LEFT!');
+        const isScoreToLeftNet = Phaser.Geom.Intersects.PointToLine(puckPoint, this.goalLineLeft, 4);
+        const isScoreToRightNet = Phaser.Geom.Intersects.PointToLine(puckPoint, this.goalLineRight, 4);
+
+        if (isScoreToLeftNet) {
+            console.log('GOAL LEFT!');
         }
 
-        if (Phaser.Geom.Intersects.PointToLine(puckPoint, this.goalLineRight, 4)) {
+        if (isScoreToRightNet) {
             console.log('GOAL RIGHT!');
+        }
+
+        if (isScoreToLeftNet || isScoreToRightNet) {
+            this.puck.setVelocity(0, 0);
         }
     }
 }
