@@ -1,5 +1,5 @@
 import { Game, GameObjects, Geom, Math, Physics, Scene, Scenes, Types } from 'phaser';
-import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
+import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
 
 export let hockeyScene: Scenes.ScenePlugin;
 
@@ -9,7 +9,7 @@ export class Hockey extends Scene {
     private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
 
     constructor() {
-        super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
+        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
     }
 
     preload() {
@@ -39,7 +39,11 @@ export class Hockey extends Scene {
         radialBorderGroup.getChildren().forEach(({ body }) => (body as any).setCircle(16).setImmovable(true));
 
         const netGroup = this.physics.add.group({ defaultKey: 'nets' });
-        const netBorder = this.add.line(0, -SIZE_Y / 2, SIZE_X, 1);
+        const leftNet = this.add.rectangle(-NET_LINE_X_OFFSET - PUCK_DIAMETER - NET_DEPTH / 2, 0, NET_DEPTH - PUCK_DIAMETER, NET_WIDTH);
+        const rightNet = this.add.rectangle(NET_LINE_X_OFFSET + PUCK_DIAMETER + NET_DEPTH / 2, 0, NET_DEPTH - PUCK_DIAMETER, NET_WIDTH);
+        netGroup.add(leftNet).add(rightNet);
+        netGroup.getChildren().forEach(({ body }) => (body as any).setImmovable(true));
+
 
         // DRAWING
         const rinkImage = this.add.image(-SIZE_X / 2, -SIZE_Y / 2, 'rink').setOrigin(0, 0);
@@ -93,7 +97,7 @@ export class Hockey extends Scene {
         this.puck = this.physics.add.image(0, 0, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
             .setCircle(PUCK_IMG_SIZE / 2)
-            .setVelocity(-200, -80)
+            .setVelocity(-300, 100)
             .setBounce(0.8);
 
         this.physics.add.collider(this.puck, radialBorderGroup);
@@ -102,9 +106,8 @@ export class Hockey extends Scene {
     }
 
     override update() {
-        const puckPoint = new Geom.Point(this.puck.x, this.puck.y);
-        const isScoreToLeftNet = Phaser.Geom.Intersects.PointToLine(puckPoint, this.goalLineLeft, 4);
-        const isScoreToRightNet = Phaser.Geom.Intersects.PointToLine(puckPoint, this.goalLineRight, 4);
+        const isScoreToLeftNet = Geom.Intersects.PointToLine(new Geom.Point(this.puck.x + PUCK_RADIUS / 2, this.puck.y), this.goalLineLeft, PUCK_RADIUS);
+        const isScoreToRightNet = Geom.Intersects.PointToLine(new Geom.Point(this.puck.x - PUCK_RADIUS / 2, this.puck.y), this.goalLineRight, PUCK_RADIUS);
 
         if (isScoreToLeftNet) {
             console.log('GOAL LEFT!');

@@ -1,6 +1,7 @@
 import { Math } from 'phaser';
 
 export const PUCK_RADIUS = 4;
+export const PUCK_DIAMETER = PUCK_RADIUS * 2;
 export const PUCK_IMG_SIZE = 32;
 export const SIZE_Y = 400;
 export const SIZE_X = SIZE_Y * 2;
@@ -12,7 +13,8 @@ export const BORDER_BLOCK_RADIUS = 16;
 export const RADIAL_BLOCK_SHIFT = CORNER_D - BORDER_BLOCK_RADIUS;
 export const NET_LINE_X_OFFSET = SIZE_X / 2 - SIZE_X / 15;
 export const GOALIE_HALF_CIRCLE_RADIUS = CIRCLE_RADIUS / 2;
-export const NET_HALF_WIDTH = GOALIE_HALF_CIRCLE_RADIUS * 0.7;
+export const NET_WIDTH = GOALIE_HALF_CIRCLE_RADIUS * 1.4;
+export const NET_HALF_WIDTH = NET_WIDTH / 2;
 export const NET_DEPTH = NET_HALF_WIDTH * 0.6;
 export const BLUE_LINE_X_OFFSET = SIZE_X / 8;
 export const FACE_OFF_SPOT_SIZE = 5;
