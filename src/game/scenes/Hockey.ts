@@ -54,10 +54,10 @@ export class Hockey extends Scene {
             .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_180)
             .strokePath()
             // red lines
-            .lineBetween(0, -SIZE_Y / 2, 0, -CIRCLE_RADIUS - 2)
+            .lineBetween(0, -SIZE_Y / 2 + 3, 0, -CIRCLE_RADIUS - 2)
             .lineBetween(0, -CIRCLE_RADIUS + 2, 0, -FACE_OFF_SPOT_SIZE)
             .lineBetween(0, CIRCLE_RADIUS - 2, 0, FACE_OFF_SPOT_SIZE)
-            .lineBetween(0, CIRCLE_RADIUS + 2, 0, SIZE_Y / 2)
+            .lineBetween(0, CIRCLE_RADIUS + 2, 0, SIZE_Y / 2 - 3)
             .lineBetween(-NET_LINE_X_OFFSET, -SIZE_Y / 2 + 15, -NET_LINE_X_OFFSET, SIZE_Y / 2 - 15)
             .lineBetween(NET_LINE_X_OFFSET, -SIZE_Y / 2 + 15, NET_LINE_X_OFFSET, SIZE_Y / 2 - 15)
             // goalie half circles
