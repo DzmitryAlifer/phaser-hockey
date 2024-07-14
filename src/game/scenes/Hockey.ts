@@ -32,8 +32,10 @@ export class Hockey3 extends Scene {
 
         this.add.image(-SIZE_X / 2, -SIZE_Y / 2, 'rink').setOrigin(0, 0);
 
-        const graphics = this.add.graphics({ fillStyle: { color: ICE_RED, alpha: ICE_ALPHA } });
-        graphics.lineStyle(4, ICE_RED, ICE_ALPHA)
+        const graphicsRed = this.add.graphics({ fillStyle: { color: ICE_RED, alpha: ICE_ALPHA } }).lineStyle(4, ICE_RED, ICE_ALPHA);
+        const graphicsBlue = this.add.graphics({ fillStyle: { color: ICE_BLUE, alpha: ICE_ALPHA } }).lineStyle(4, ICE_BLUE, ICE_ALPHA);
+        
+        graphicsRed
             // outter shape
             .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_270)
             .arc(SIZE_X / 2 - CORNER_D + 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_270, DEGREE_360)
@@ -47,12 +49,14 @@ export class Hockey3 extends Scene {
             .lineBetween(NET_LINE_X_OFFSET, -SIZE_Y / 2, NET_LINE_X_OFFSET, SIZE_Y / 2)
             // goalie half circles
             .beginPath().arc(-NET_LINE_X_OFFSET + 2, 0, CIRCLE_RADIUS / 2, DEGREE_270, DEGREE_90).strokePath()
-            .beginPath().arc(NET_LINE_X_OFFSET - 2, 0, CIRCLE_RADIUS / 2, DEGREE_90, DEGREE_270).strokePath()
+            .beginPath().arc(NET_LINE_X_OFFSET - 2, 0, CIRCLE_RADIUS / 2, DEGREE_90, DEGREE_270).strokePath();
 
-        drawRedFaceOffCircle(graphics, -SIZE_X / 3.5, -SIZE_Y / 4);
-        drawRedFaceOffCircle(graphics, -SIZE_X / 3.5, SIZE_Y / 4);
-        drawRedFaceOffCircle(graphics, SIZE_X / 3.5, -SIZE_Y / 4);
-        drawRedFaceOffCircle(graphics, SIZE_X / 3.5, SIZE_Y / 4);
+        graphicsBlue.arc(0, 0, CIRCLE_RADIUS, 0, DEGREE_360).strokePath().fillCircle(0, 0, 6);
+
+        drawRedFaceOffCircle(graphicsRed, -SIZE_X / 3.5, -SIZE_Y / 4);
+        drawRedFaceOffCircle(graphicsRed, -SIZE_X / 3.5, SIZE_Y / 4);
+        drawRedFaceOffCircle(graphicsRed, SIZE_X / 3.5, -SIZE_Y / 4);
+        drawRedFaceOffCircle(graphicsRed, SIZE_X / 3.5, SIZE_Y / 4);
 
         const puck = this.physics.add.image(-100, -50, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
