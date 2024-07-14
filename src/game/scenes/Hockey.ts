@@ -2,6 +2,8 @@ import { Game, GameObjects, Geom, Math, Physics, Scene, Scenes, Types } from 'ph
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
 
 export let hockeyScene: Scenes.ScenePlugin;
+let velocityX = 0;
+let velocityY = 0;
 
 export class Hockey extends Scene {
     private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_HALF_WIDTH + 3, -NET_LINE_X_OFFSET - 2, NET_HALF_WIDTH - 3);
@@ -97,7 +99,7 @@ export class Hockey extends Scene {
         this.puck = this.physics.add.image(0, 0, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
             .setCircle(PUCK_IMG_SIZE / 2)
-            .setVelocity(-300, 100)
+            .setVelocity(velocityX, velocityY)
             .setBounce(0.8);
 
         this.physics.add.collider(this.puck, radialBorderGroup);
@@ -167,4 +169,12 @@ function drawFieldArc(graphics: GameObjects.Graphics): GameObjects.Graphics {
         .strokePath();
 }
 
-export const startHockey = (parent: string) => new Game({ ...config, parent });
+export const startHockey = (parent: string, velX: number, velY: number) => {
+    return new Game({ ...config, parent });
+};
+
+export const restartHockey = (velX: number, velY: number) => {
+    velocityX = velX;
+    velocityY = velY;
+    hockeyScene.restart();
+};
