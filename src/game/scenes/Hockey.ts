@@ -88,7 +88,7 @@ export class Hockey3 extends Scene {
         this.puck = this.physics.add.image(0, 0, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
             .setCircle(PUCK_IMG_SIZE / 2)
-            .setVelocity(-200, -80)
+            .setVelocity(-200, 0)
             .setBounce(0.8);
 
         this.physics.add.collider(this.puck, radialBorderGroup);
@@ -104,8 +104,6 @@ export class Hockey3 extends Scene {
         if (Phaser.Geom.Intersects.PointToLine(puckPoint, this.goalLineRight, 4)) {
             console.log('GOAL RIGHT!');
         }
-
-        console.log(this.puck.x, this.puck.y)
     }
 }
 
