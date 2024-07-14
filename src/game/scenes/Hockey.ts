@@ -1,5 +1,5 @@
 import { Game, GameObjects, Geom, Math, Physics, Scene, Scenes, Types } from 'phaser';
-import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
+import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS } from '../constants';
 
 export let hockeyScene: Scenes.ScenePlugin;
 let velocityX = 0;
@@ -11,7 +11,7 @@ export class Hockey extends Scene {
     private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
 
     constructor() {
-        super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
+        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
     }
 
     preload() {
@@ -38,7 +38,7 @@ export class Hockey extends Scene {
         createRadialBorder(radialBorderGroup, SIZE_X / 2 - RADIAL_BLOCK_SHIFT, RADIAL_BLOCK_SHIFT - SIZE_Y / 2, 270);
         createRadialBorder(radialBorderGroup, SIZE_X / 2 - RADIAL_BLOCK_SHIFT, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 0);
         createRadialBorder(radialBorderGroup, RADIAL_BLOCK_SHIFT - SIZE_X / 2, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 90);
-        radialBorderGroup.getChildren().forEach(({ body }) => (body as any).setCircle(16).setImmovable(true));
+        radialBorderGroup.getChildren().forEach(({ body }) => (body as any).setCircle(BORDER_BLOCK_RADIUS).setImmovable(true));
 
         const netGroup = this.physics.add.group({ defaultKey: 'nets' });
         const leftNet = this.add.rectangle(-NET_LINE_X_OFFSET - PUCK_DIAMETER - NET_DEPTH / 2, 0, NET_DEPTH - PUCK_DIAMETER, NET_WIDTH);

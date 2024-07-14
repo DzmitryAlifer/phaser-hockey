@@ -18,7 +18,7 @@ export const NET_HALF_WIDTH = NET_WIDTH / 2;
 export const NET_DEPTH = NET_HALF_WIDTH * 0.6;
 export const BLUE_LINE_X_OFFSET = SIZE_X / 8;
 export const FACE_OFF_SPOT_SIZE = 5;
-export const BLOCK_AMOUNT = 24;
+export const BLOCK_AMOUNT = 12;
 
 export const DEGREE_90 = Math.DegToRad(90);
 export const DEGREE_180 = Math.DegToRad(180);
