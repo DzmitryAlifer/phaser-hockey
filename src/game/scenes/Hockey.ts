@@ -1,5 +1,5 @@
 import { Game, GameObjects, Geom, Math, Physics, Scene } from 'phaser';
-import { BLOCK_AMOUNT, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
+import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_SIZE, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
 
 export class Hockey3 extends Scene {
     constructor() {
@@ -32,9 +32,15 @@ export class Hockey3 extends Scene {
 
         this.add.image(-SIZE_X / 2, -SIZE_Y / 2, 'rink').setOrigin(0, 0);
 
-        const graphicsRed = this.add.graphics({ fillStyle: { color: ICE_RED, alpha: ICE_ALPHA } }).lineStyle(4, ICE_RED, ICE_ALPHA);
         const graphicsBlue = this.add.graphics({ fillStyle: { color: ICE_BLUE, alpha: ICE_ALPHA } }).lineStyle(4, ICE_BLUE, ICE_ALPHA);
+        const graphicsRed = this.add.graphics({ fillStyle: { color: ICE_RED, alpha: ICE_ALPHA } }).lineStyle(4, ICE_RED, ICE_ALPHA);
+        const graphicsBlack = this.add.graphics({ fillStyle: { color: ICE_RED, alpha: ICE_ALPHA } }).lineStyle(4, NET_COLOR);
         
+        graphicsBlue
+            .arc(0, 0, CIRCLE_RADIUS, 0, DEGREE_360).strokePath().fillCircle(0, 0, FACE_OFF_SPOT_SIZE)
+            .lineBetween(-BLUE_LINE_X_OFFSET, -SIZE_Y / 2, -BLUE_LINE_X_OFFSET, SIZE_Y / 2)
+            .lineBetween(BLUE_LINE_X_OFFSET, -SIZE_Y / 2, BLUE_LINE_X_OFFSET, SIZE_Y / 2);
+
         graphicsRed
             // outter shape
             .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_270)
@@ -44,19 +50,36 @@ export class Hockey3 extends Scene {
             .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_270)
             .strokePath()
             // red lines
-            .lineBetween(0, -SIZE_Y / 2, 0, SIZE_Y / 2)
+            .lineBetween(0, -SIZE_Y / 2, 0, -CIRCLE_RADIUS - 2)
+            .lineBetween(0, -CIRCLE_RADIUS + 2, 0, -FACE_OFF_SPOT_SIZE)
+            .lineBetween(0, CIRCLE_RADIUS - 2, 0, FACE_OFF_SPOT_SIZE)
+            .lineBetween(0, CIRCLE_RADIUS + 2, 0, SIZE_Y / 2)
             .lineBetween(-NET_LINE_X_OFFSET, -SIZE_Y / 2, -NET_LINE_X_OFFSET, SIZE_Y / 2)
             .lineBetween(NET_LINE_X_OFFSET, -SIZE_Y / 2, NET_LINE_X_OFFSET, SIZE_Y / 2)
             // goalie half circles
-            .beginPath().arc(-NET_LINE_X_OFFSET + 2, 0, CIRCLE_RADIUS / 2, DEGREE_270, DEGREE_90).strokePath()
-            .beginPath().arc(NET_LINE_X_OFFSET - 2, 0, CIRCLE_RADIUS / 2, DEGREE_90, DEGREE_270).strokePath();
+            .beginPath().arc(-NET_LINE_X_OFFSET + 2, 0, GOALIE_HALF_CIRCLE_RADIUS, DEGREE_270, DEGREE_90).strokePath()
+            .beginPath().arc(NET_LINE_X_OFFSET - 2, 0, GOALIE_HALF_CIRCLE_RADIUS, DEGREE_90, DEGREE_270).strokePath()
+            // middle zone face-off spots
+            .fillCircle(-BLUE_LINE_X_OFFSET + SIZE_X / 30, -SIZE_Y / 4, FACE_OFF_SPOT_SIZE)
+            .fillCircle(BLUE_LINE_X_OFFSET - SIZE_X / 30, -SIZE_Y / 4, FACE_OFF_SPOT_SIZE)
+            .fillCircle(-BLUE_LINE_X_OFFSET + SIZE_X / 30, SIZE_Y / 4, FACE_OFF_SPOT_SIZE)
+            .fillCircle(BLUE_LINE_X_OFFSET - SIZE_X / 30, SIZE_Y / 4, FACE_OFF_SPOT_SIZE);
 
-        graphicsBlue.arc(0, 0, CIRCLE_RADIUS, 0, DEGREE_360).strokePath().fillCircle(0, 0, 6);
+        graphicsBlack
+            // left net
+            .lineBetween(-NET_LINE_X_OFFSET - 2, -NET_SIZE, -NET_LINE_X_OFFSET - 16, -NET_SIZE + 4)
+            .lineBetween(-NET_LINE_X_OFFSET - 2, NET_SIZE, -NET_LINE_X_OFFSET - 16, NET_SIZE - 4)
+            .lineBetween(-NET_LINE_X_OFFSET - 16, -NET_SIZE + 3, -NET_LINE_X_OFFSET - 16, NET_SIZE - 3)
+            // right net
+            .lineBetween(NET_LINE_X_OFFSET + 2, -NET_SIZE, NET_LINE_X_OFFSET + 16, -NET_SIZE + 4)
+            .lineBetween(NET_LINE_X_OFFSET + 2, NET_SIZE, NET_LINE_X_OFFSET + 16, NET_SIZE - 4)
+            .lineBetween(NET_LINE_X_OFFSET + 16, -NET_SIZE + 3, NET_LINE_X_OFFSET + 16, NET_SIZE - 3)
+            
 
-        drawRedFaceOffCircle(graphicsRed, -SIZE_X / 3.5, -SIZE_Y / 4);
-        drawRedFaceOffCircle(graphicsRed, -SIZE_X / 3.5, SIZE_Y / 4);
-        drawRedFaceOffCircle(graphicsRed, SIZE_X / 3.5, -SIZE_Y / 4);
-        drawRedFaceOffCircle(graphicsRed, SIZE_X / 3.5, SIZE_Y / 4);
+        drawRedFaceOffCircle(graphicsRed, -SIZE_X / 3.2, -SIZE_Y / 4);
+        drawRedFaceOffCircle(graphicsRed, -SIZE_X / 3.2, SIZE_Y / 4);
+        drawRedFaceOffCircle(graphicsRed, SIZE_X / 3.2, -SIZE_Y / 4);
+        drawRedFaceOffCircle(graphicsRed, SIZE_X / 3.2, SIZE_Y / 4);
 
         const puck = this.physics.add.image(-100, -50, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
@@ -92,11 +115,11 @@ function drawRedFaceOffCircle(graphics: GameObjects.Graphics, x: number, y: numb
     graphics.beginPath()
         .arc(x, y, CIRCLE_RADIUS, 0, DEGREE_360)
         .strokePath()
-        .fillCircle(x, y, 6)
+        .fillCircle(x, y, FACE_OFF_SPOT_SIZE)
         .lineBetween(x - 10, y - CIRCLE_RADIUS, x - 10, y - CIRCLE_RADIUS - 12)
         .lineBetween(x + 10, y - CIRCLE_RADIUS, x + 10, y - CIRCLE_RADIUS - 12)
         .lineBetween(x - 10, y + CIRCLE_RADIUS, x - 10, y + CIRCLE_RADIUS + 12)
-        .lineBetween(x + 10, y + CIRCLE_RADIUS, x + 10, y + CIRCLE_RADIUS + 12)
+        .lineBetween(x + 10, y + CIRCLE_RADIUS, x + 10, y + CIRCLE_RADIUS + 12);
 }
 
 export const startHockey = (parent: string) => new Game({ ...config, parent });
