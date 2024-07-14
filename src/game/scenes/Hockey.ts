@@ -30,8 +30,7 @@ export class Hockey3 extends Scene {
         createRadialBorder(radialBorderGroup, RADIAL_BLOCK_SHIFT - SIZE_X / 2, SIZE_Y / 2 - RADIAL_BLOCK_SHIFT, 90);
         radialBorderGroup.getChildren().forEach(({ body }) => (body as any).setCircle(16).setImmovable(true));
 
-        const image = this.add.image(-SIZE_X / 2, -SIZE_Y / 2, 'rink');
-        image.setOrigin(0, 0);
+        this.add.image(-SIZE_X / 2, -SIZE_Y / 2, 'rink').setOrigin(0, 0);
 
         const graphics = this.add.graphics();
         graphics.lineStyle(4, 0xffff00, 1);
