@@ -1,11 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import Phaser from 'phaser';
 import { Events } from 'phaser';
-import { startHockey } from './scenes/Hockey';
+import { Hockey, hockeyScene, startHockey } from './scenes/Hockey';
 
 @Component({
     selector: 'phaser-game',
-    template: '<div id="game-container"></div>',
+    template: `
+        <button mat-raised-button (click)="restart()">Restart</button>
+        <div id="game-container"></div>
+    `,
+    imports: [MatButtonModule],
     standalone: true,
 })
 export class PhaserGame implements OnInit, OnDestroy {
@@ -22,6 +27,10 @@ export class PhaserGame implements OnInit, OnDestroy {
                 this.sceneCallback(scene);
             }
         });
+    }
+
+    restart(): void {
+        hockeyScene?.restart();
     }
 
     ngOnDestroy() {

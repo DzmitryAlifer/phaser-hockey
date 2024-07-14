@@ -1,5 +1,7 @@
-import { Game, GameObjects, Geom, Math, Physics, Scene, Types } from 'phaser';
+import { Game, GameObjects, Geom, Math, Physics, Scene, Scenes, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_SIZE, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
+
+export let hockeyScene: Scenes.ScenePlugin;
 
 export class Hockey extends Scene {
     private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_SIZE + 3, -NET_LINE_X_OFFSET - 2, NET_SIZE - 3);
@@ -13,6 +15,7 @@ export class Hockey extends Scene {
     preload() {
         this.load.image('rink', 'assets/rink_texture.jpg');
         this.load.image('puck', 'assets/puck.png');
+        hockeyScene = this.scene;
     }
 
     create() {
@@ -110,8 +113,11 @@ export class Hockey extends Scene {
 
         if (isScoreToLeftNet || isScoreToRightNet) {
             this.puck.setVelocity(0, 0);
-            // this.scene.restart();
         }
+    }
+
+    restart(): void {
+        this.scene.restart();
     }
 }
 
