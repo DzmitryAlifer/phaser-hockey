@@ -1,7 +1,11 @@
-import { Game, GameObjects, Geom, Math, Physics, Scene } from 'phaser';
+import { Game, GameObjects, Geom, Math, Physics, Scene, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_SIZE, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y } from '../constants';
 
 export class Hockey3 extends Scene {
+    private goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_SIZE + 3, -NET_LINE_X_OFFSET - 2, NET_SIZE - 3);
+    private goalLineRight = new Geom.Line(NET_LINE_X_OFFSET + 2, -NET_SIZE + 3, NET_LINE_X_OFFSET + 2, NET_SIZE - 3);
+    private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
+
     constructor() {
         super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
     }
@@ -81,14 +85,27 @@ export class Hockey3 extends Scene {
         drawRedFaceOffCircle(graphicsRed, SIZE_X / 3.2, -SIZE_Y / 4);
         drawRedFaceOffCircle(graphicsRed, SIZE_X / 3.2, SIZE_Y / 4);
 
-        const puck = this.physics.add.image(-100, -50, 'puck')
+        this.puck = this.physics.add.image(0, 0, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
             .setCircle(PUCK_IMG_SIZE / 2)
             .setVelocity(-200, -80)
             .setBounce(0.8);
 
-        this.physics.add.collider(puck, radialBorderGroup);
-        this.physics.add.collider(puck, straightBorderGroup);
+        this.physics.add.collider(this.puck, radialBorderGroup);
+        this.physics.add.collider(this.puck, straightBorderGroup);
+    }
+
+    override update() {
+        const puckPoint = new Geom.Point(this.puck.x, this.puck.y);
+        if (Phaser.Geom.Intersects.PointToLine(puckPoint, this.goalLineLeft, 4)) {
+           console.log('GOAL LEFT!');
+        }
+
+        if (Phaser.Geom.Intersects.PointToLine(puckPoint, this.goalLineRight, 4)) {
+            console.log('GOAL RIGHT!');
+        }
+
+        console.log(this.puck.x, this.puck.y)
     }
 }
 
