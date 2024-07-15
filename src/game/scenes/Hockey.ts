@@ -1,5 +1,17 @@
-import { Game, GameObjects, Geom, Math, Physics, Scene, Scenes, Types } from 'phaser';
+import { Game, GameObjects, Geom, Physics, Scene, Scenes, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE } from '../constants';
+
+enum CommonObjective {
+    CatchPuck
+}
+
+enum OffensiveObjective {
+    Puck
+}
+
+enum DefensiveObjective {
+    Puck
+}
 
 export let hockeyScene: Scenes.ScenePlugin;
 let velocityX = 0;
@@ -9,11 +21,11 @@ export class Hockey extends Scene {
     private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_HALF_WIDTH + 3, -NET_LINE_X_OFFSET - 2, NET_HALF_WIDTH - 3);
     private readonly goalLineRight = new Geom.Line(NET_LINE_X_OFFSET + 2, -NET_HALF_WIDTH + 3, NET_LINE_X_OFFSET + 2, NET_HALF_WIDTH - 3);
     private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
-    private playerImg!: Types.Physics.Arcade.ImageWithDynamicBody;
+    private player!: Types.Physics.Arcade.ImageWithDynamicBody;
     private playerTitle!: GameObjects.Text;
 
     constructor() {
-        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
+        super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
     }
 
     preload() {
@@ -107,13 +119,14 @@ export class Hockey extends Scene {
             .setVelocity(velocityX, velocityY)
             .setBounce(0.8);
         
-        this.playerImg = this.physics.add.image(-200, 0, 'player');
-        this.playerImg
+        this.player = this.physics.add.image(-200, 0, 'player');
+        this.player
             .setScale(0.8)
-            .setCircle(PLAYER_SIZE, this.playerImg.width / 2 - 11, this.playerImg.height / 2 - 12)
+            .setCircle(PLAYER_SIZE, this.player.width / 2 - 11, this.player.height / 2 - 12)
             .setVelocity(velocityX / 2, velocityY / 2)
             .setBounce(0.4);
-        this.playerTitle = this.add.text(this.playerImg.x, this.playerImg.y, '88 Lindros', PLAYER_TITLE_STYLE).setOrigin(0.5, -2);
+        this.player.setData('currentObjective', CommonObjective.CatchPuck);
+        this.playerTitle = this.add.text(this.player.x, this.player.y, '88 Lindros', PLAYER_TITLE_STYLE).setOrigin(0.5, -2);
 
 
         this.physics.add.collider(this.puck, radialBorderGroup);
@@ -122,7 +135,17 @@ export class Hockey extends Scene {
     }
 
     override update() {
-        this.playerTitle.setPosition(this.playerImg.x, this.playerImg.y);
+        this.playerTitle.setPosition(this.player.x, this.player.y);
+        
+        if (this.player.getData('currentObjective') === CommonObjective.CatchPuck) {
+            if (Phaser.Math.Distance.Between(this.player.x, this.player.y, this.puck.x, this.puck.y) > 25) {
+                this.player.setRotation(Math.atan2(this.puck.y - this.player.y, this.puck.x - this.player.x));
+                this.physics.moveTo(this.player, this.puck.x, this.puck.y, 50);
+            } else {
+                this.player.setVelocity(0);
+                this.puck.setVelocity(0);
+            }
+        }
 
 
         const isScoreToLeftNet = Geom.Intersects.PointToLine(new Geom.Point(this.puck.x + PUCK_RADIUS / 2, this.puck.y), this.goalLineLeft, PUCK_RADIUS);
@@ -162,7 +185,7 @@ const config = {
 
 function createRadialBorder(group: Physics.Arcade.Group, x: number, y: number, startAngle: number): void {
     const borderBlock = group.createMultiple({ quantity: BLOCK_AMOUNT, key: group.defaultKey, frame: 0, visible: false });
-    Phaser.Actions.PlaceOnCircle(borderBlock, { x, y, radius: CORNER_D } as Geom.Circle, Math.DegToRad(startAngle), Math.DegToRad(startAngle + 90));
+    Phaser.Actions.PlaceOnCircle(borderBlock, { x, y, radius: CORNER_D } as Geom.Circle, Phaser.Math.DegToRad(startAngle), Phaser.Math.DegToRad(startAngle + 90));
 }
 
 function drawRedFaceOffCircle(graphics: GameObjects.Graphics, x: number, y: number): void {
