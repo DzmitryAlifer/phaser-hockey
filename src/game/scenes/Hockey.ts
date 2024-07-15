@@ -108,8 +108,8 @@ export class Hockey extends Scene {
         const playerImg = this.physics.add.image(-200, 0, 'player');
         const player = playerImg
             .setScale(0.8)
-            .setCircle(PLAYER_SIZE)
-            .setVelocity(velocityX/2, velocityY/2)
+            .setCircle(PLAYER_SIZE, playerImg.width / 2 - 11, playerImg.height / 2 - 11)
+            .setVelocity(velocityX / 2, velocityY / 2)
             .setBounce(0.4);
 
         this.physics.add.collider(this.puck, radialBorderGroup);
