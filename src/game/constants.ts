@@ -1,4 +1,4 @@
-import { Math } from 'phaser';
+import { Math, Types } from 'phaser';
 
 export const PUCK_RADIUS = 4;
 export const PUCK_DIAMETER = PUCK_RADIUS * 2;
@@ -20,7 +20,13 @@ export const BLUE_LINE_X_OFFSET = SIZE_X / 8;
 export const FACE_OFF_SPOT_SIZE = 5;
 export const BLOCK_AMOUNT = 12;
 
-export const PLAYER_SIZE = 12;
+export const PLAYER_SIZE = 13;
+export const PLAYER_TITLE_STYLE: Types.GameObjects.Text.TextStyle = {
+    fontSize: 12,
+    fontFamily: 'Arial',
+    fontStyle: 'bold',
+    color: '#000000'
+};
 
 export const DEGREE_90 = Math.DegToRad(90);
 export const DEGREE_180 = Math.DegToRad(180);

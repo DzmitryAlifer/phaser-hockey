@@ -1,5 +1,5 @@
 import { Game, GameObjects, Geom, Math, Physics, Scene, Scenes, Types } from 'phaser';
-import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE } from '../constants';
+import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE } from '../constants';
 
 export let hockeyScene: Scenes.ScenePlugin;
 let velocityX = 0;
@@ -9,6 +9,8 @@ export class Hockey extends Scene {
     private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_HALF_WIDTH + 3, -NET_LINE_X_OFFSET - 2, NET_HALF_WIDTH - 3);
     private readonly goalLineRight = new Geom.Line(NET_LINE_X_OFFSET + 2, -NET_HALF_WIDTH + 3, NET_LINE_X_OFFSET + 2, NET_HALF_WIDTH - 3);
     private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
+    private playerImg!: Types.Physics.Arcade.ImageWithDynamicBody;
+    private playerTitle!: GameObjects.Text;
 
     constructor() {
         super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
@@ -105,12 +107,14 @@ export class Hockey extends Scene {
             .setVelocity(velocityX, velocityY)
             .setBounce(0.8);
         
-        const playerImg = this.physics.add.image(-200, 0, 'player');
-        const player = playerImg
+        this.playerImg = this.physics.add.image(-200, 0, 'player');
+        this.playerImg
             .setScale(0.8)
-            .setCircle(PLAYER_SIZE, playerImg.width / 2 - 11, playerImg.height / 2 - 11)
+            .setCircle(PLAYER_SIZE, this.playerImg.width / 2 - 11, this.playerImg.height / 2 - 12)
             .setVelocity(velocityX / 2, velocityY / 2)
             .setBounce(0.4);
+        this.playerTitle = this.add.text(this.playerImg.x, this.playerImg.y, '88 Lindros', PLAYER_TITLE_STYLE).setOrigin(0.5, -2);
+
 
         this.physics.add.collider(this.puck, radialBorderGroup);
         this.physics.add.collider(this.puck, straightBorderGroup);
@@ -118,6 +122,9 @@ export class Hockey extends Scene {
     }
 
     override update() {
+        this.playerTitle.setPosition(this.playerImg.x, this.playerImg.y);
+
+
         const isScoreToLeftNet = Geom.Intersects.PointToLine(new Geom.Point(this.puck.x + PUCK_RADIUS / 2, this.puck.y), this.goalLineLeft, PUCK_RADIUS);
         const isScoreToRightNet = Geom.Intersects.PointToLine(new Geom.Point(this.puck.x - PUCK_RADIUS / 2, this.puck.y), this.goalLineRight, PUCK_RADIUS);
 
