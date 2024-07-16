@@ -1,6 +1,59 @@
 {
     "textures": [
         {
+            "image": "hockey-player.png",
+            "format": "RGBA8888",
+            "size": {
+                "w": 140,
+                "h": 70
+            },
+            "scale": 1,
+            "frames": [
+                {
+                    "filename": "skating/frame00",
+                    "rotated": false,
+                    "trimmed": true,
+                    "sourceSize": {
+                        "w": 60,
+                        "h": 70
+                    },
+                    "spriteSourceSize": {
+                        "x": 0,
+                        "y": 0,
+                        "w": 48,
+                        "h": 70
+                    },
+                    "frame": {
+                        "x": 35,
+                        "y": 0,
+                        "w": 48,
+                        "h": 70
+                    }
+                },
+                {
+                    "filename": "skating/frame04",
+                    "rotated": false,
+                    "trimmed": true,
+                    "sourceSize": {
+                        "w": 60,
+                        "h": 70
+                    },
+                    "spriteSourceSize": {
+                        "x": 0,
+                        "y": 0,
+                        "w": 57,
+                        "h": 60
+                    },
+                    "frame": {
+                        "x": 83,
+                        "y": 0,
+                        "w": 57,
+                        "h": 60
+                    }
+                }
+            ]
+        },
+        {
             "image": "knight.png",
             "format": "RGBA8888",
             "size": {

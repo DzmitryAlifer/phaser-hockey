@@ -32,9 +32,10 @@ export class Hockey extends Scene {
         this.load.image('rink', 'assets/rink_texture.jpg');
         this.load.image('puck', 'assets/puck.png');
         this.load.image('net', 'assets/net2.png');
-        this.load.image('player', 'assets/player-idle-tr.png');
+        this.load.image('player', 'assets/player-idle.png');
         hockeyScene = this.scene;
-        this.load.atlas('knight', 'assets/knight.png', 'assets/sprites.json');
+        this.load.atlas('knight', 'assets/knight.png', 'assets/knight.json');
+        this.load.atlas('hockey-player', 'assets/hockey-player-sprites.png', 'assets/hockey-player.json');
     }
 
     create() {
@@ -135,13 +136,13 @@ export class Hockey extends Scene {
         this.physics.add.collider(this.puck, netGroup);
 
         this.anims.create({
-            key: 'skate',
-            frames: this.anims.generateFrameNames('knight', { prefix: 'skate/frame', start: 0, end: 8, zeroPad: 2 }),
-            frameRate: 8,
+            key: 'skating',
+            frames: this.anims.generateFrameNames('hockey-player', { prefix: 'skating/frame', start: 0, end: 8, zeroPad: 2 }),
+            frameRate: 3,
             repeat: -1
         });
 
-        (this.add as any).sprite(-100, -100).play('skate');
+        (this.add as any).sprite(-100, -100).setScale(0.8).play('skating');
     }
 
     override update() {
