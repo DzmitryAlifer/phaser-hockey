@@ -34,6 +34,7 @@ export class Hockey extends Scene {
         this.load.image('net', 'assets/net2.png');
         this.load.image('player', 'assets/player-idle-tr.png');
         hockeyScene = this.scene;
+        this.load.atlas('knight', 'https://labs.phaser.io/assets/animations/knight.png', 'assets/sprites.json');
     }
 
     create() {
@@ -132,6 +133,15 @@ export class Hockey extends Scene {
         this.physics.add.collider(this.puck, radialBorderGroup);
         this.physics.add.collider(this.puck, straightBorderGroup);
         this.physics.add.collider(this.puck, netGroup);
+
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNames('knight', { prefix: 'idle/frame', start: 0, end: 5, zeroPad: 4 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        (this.add as any).sprite(-100, -100).play('idle');
     }
 
     override update() {
