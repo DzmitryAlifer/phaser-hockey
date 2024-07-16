@@ -10,7 +10,7 @@
             "scale": 1,
             "frames": [
                 {
-                    "filename": "idle/frame0000",
+                    "filename": "skate/frame00",
                     "rotated": false,
                     "trimmed": true,
                     "sourceSize": {
@@ -31,7 +31,7 @@
                     }
                 },
                 {
-                    "filename": "idle/frame0004",
+                    "filename": "skate/frame04",
                     "rotated": false,
                     "trimmed": true,
                     "sourceSize": {

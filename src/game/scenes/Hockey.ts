@@ -135,13 +135,13 @@ export class Hockey extends Scene {
         this.physics.add.collider(this.puck, netGroup);
 
         this.anims.create({
-            key: 'idle',
-            frames: this.anims.generateFrameNames('knight', { prefix: 'idle/frame', start: 0, end: 5, zeroPad: 4 }),
+            key: 'skate',
+            frames: this.anims.generateFrameNames('knight', { prefix: 'skate/frame', start: 0, end: 8, zeroPad: 2 }),
             frameRate: 8,
             repeat: -1
         });
 
-        (this.add as any).sprite(-100, -100).play('idle');
+        (this.add as any).sprite(-100, -100).play('skate');
     }
 
     override update() {
