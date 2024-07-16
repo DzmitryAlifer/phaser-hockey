@@ -34,7 +34,7 @@ export class Hockey extends Scene {
         this.load.image('net', 'assets/net2.png');
         this.load.image('player', 'assets/player-idle-tr.png');
         hockeyScene = this.scene;
-        this.load.atlas('knight', 'https://labs.phaser.io/assets/animations/knight.png', 'assets/sprites.json');
+        this.load.atlas('knight', 'assets/knight.png', 'assets/sprites.json');
     }
 
     create() {
