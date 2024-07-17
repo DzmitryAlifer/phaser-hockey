@@ -21,7 +21,7 @@ export class Hockey extends Scene {
     private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_HALF_WIDTH + 3, -NET_LINE_X_OFFSET - 2, NET_HALF_WIDTH - 3);
     private readonly goalLineRight = new Geom.Line(NET_LINE_X_OFFSET + 2, -NET_HALF_WIDTH + 3, NET_LINE_X_OFFSET + 2, NET_HALF_WIDTH - 3);
     private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
-    private player!: Types.Physics.Arcade.ImageWithDynamicBody;
+    private player!: Types.Physics.Arcade.SpriteWithDynamicBody;
     private playerTitle!: GameObjects.Text;
 
     constructor() {
@@ -34,7 +34,6 @@ export class Hockey extends Scene {
         this.load.image('net', 'assets/net2.png');
         this.load.image('player', 'assets/player-idle.png');
         hockeyScene = this.scene;
-        this.load.atlas('knight', 'assets/knight.png', 'assets/knight.json');
         this.load.atlas('hockey-player', 'assets/hockey-player-sprites.png', 'assets/hockey-player.json');
     }
 
@@ -121,28 +120,25 @@ export class Hockey extends Scene {
             .setVelocity(velocityX, velocityY)
             .setBounce(0.8);
         
-        this.player = this.physics.add.image(-200, 0, 'player');
-        this.player
-            .setScale(0.8)
-            .setCircle(PLAYER_SIZE, this.player.width / 2 - 11, this.player.height / 2 - 12)
-            .setVelocity(velocityX / 2, velocityY / 2)
-            .setBounce(0.4);
-        this.player.setData('currentObjective', CommonObjective.CatchPuck);
-        this.playerTitle = this.add.text(this.player.x, this.player.y, '88 Lindros', PLAYER_TITLE_STYLE).setOrigin(0.5, -2);
-
-
-        this.physics.add.collider(this.puck, radialBorderGroup);
-        this.physics.add.collider(this.puck, straightBorderGroup);
-        this.physics.add.collider(this.puck, netGroup);
-
         this.anims.create({
             key: 'skating',
             frames: this.anims.generateFrameNames('hockey-player', { prefix: 'skating/frame', start: 0, end: 8, zeroPad: 2 }),
             frameRate: 3,
             repeat: -1
         });
+        this.player = this.physics.add.sprite(-200, 0, '');
+        this.player
+            .setScale(0.8)
+            .setCircle(PLAYER_SIZE, this.player.width / 2 - 11, this.player.height / 2 - 12)
+            .setVelocity(velocityX / 2, velocityY / 2)
+            .setBounce(0.4);
+        this.player.play('skating');
+        this.player.setData('currentObjective', CommonObjective.CatchPuck);
+        this.playerTitle = this.add.text(this.player.x, this.player.y, '88 Lindros', PLAYER_TITLE_STYLE).setOrigin(0.5, -2);
 
-        (this.add as any).sprite(-100, -100).setScale(0.8).play('skating');
+        this.physics.add.collider(this.puck, radialBorderGroup);
+        this.physics.add.collider(this.puck, straightBorderGroup);
+        this.physics.add.collider(this.puck, netGroup);
     }
 
     override update() {

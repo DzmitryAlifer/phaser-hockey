@@ -34,6 +34,6 @@ export const DEGREE_270 = Math.DegToRad(270);
 export const DEGREE_360 = Math.DegToRad(360);
 
 export const NET_COLOR = 0x660000;
-export const ICE_RED = 0xdd0000;
+export const ICE_RED = 0x660000;
 export const ICE_BLUE = 0x0000dd;
 export const ICE_ALPHA = 0.25;
