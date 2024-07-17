@@ -2,7 +2,8 @@ import { Game, GameObjects, Geom, Physics, Scene, Scenes, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE } from '../constants';
 
 enum CommonObjective {
-    CatchPuck
+    CatchPuck,
+    Pass,
 }
 
 enum OffensiveObjective {
@@ -21,8 +22,8 @@ export class Hockey extends Scene {
     private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_HALF_WIDTH + 3, -NET_LINE_X_OFFSET - 2, NET_HALF_WIDTH - 3);
     private readonly goalLineRight = new Geom.Line(NET_LINE_X_OFFSET + 2, -NET_HALF_WIDTH + 3, NET_LINE_X_OFFSET + 2, NET_HALF_WIDTH - 3);
     private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
-    private player!: Types.Physics.Arcade.SpriteWithDynamicBody;
-    private playerTitle!: GameObjects.Text;
+    private players!: Types.Physics.Arcade.SpriteWithDynamicBody[];
+    private playerTitles!: GameObjects.Text[];
 
     constructor() {
         super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
@@ -39,6 +40,7 @@ export class Hockey extends Scene {
 
     create() {
         this.cameras.main.centerOn(0, 0);
+        createPlayerSkatingAnimation(this.anims);
 
         // PHYSICS - Immovable
         const straightBorderGroup = this.physics.add.group();
@@ -120,21 +122,27 @@ export class Hockey extends Scene {
             .setVelocity(velocityX, velocityY)
             .setBounce(0.8);
         
-        this.anims.create({
-            key: 'skating',
-            frames: this.anims.generateFrameNames('hockey-player', { prefix: 'skating/frame', start: 0, end: 8, zeroPad: 2 }),
-            frameRate: 3,
-            repeat: -1
-        });
-        this.player = this.physics.add.sprite(-200, 0, '');
-        this.player
+        const player1 = this.physics.add.sprite(-200, 0, '');
+        player1
             .setScale(0.8)
-            .setCircle(PLAYER_SIZE, this.player.width / 2 - 11, this.player.height / 2 - 12)
+            .setCircle(PLAYER_SIZE, player1.width / 2 - 11, player1.height / 2 - 12)
             .setVelocity(velocityX / 2, velocityY / 2)
-            .setBounce(0.4);
-        this.player.play('skating');
-        this.player.setData('currentObjective', CommonObjective.CatchPuck);
-        this.playerTitle = this.add.text(this.player.x, this.player.y, '88 Lindros', PLAYER_TITLE_STYLE).setOrigin(0.5, -2);
+            .setBounce(0.4)
+            .setData({ title: '1 PlayerA', currentObjective: CommonObjective.CatchPuck })
+            .play('skating');
+        
+        const player2 = this.physics.add.sprite(-100, -100, '');
+        player2
+            .setScale(0.8)
+            .setCircle(PLAYER_SIZE, player2.width / 2 - 11, player2.height / 2 - 12)
+            // .setVelocity(velocityX / 3, velocityY / 3)
+            .setBounce(0.4)
+            .setData({ title: '2 PlayerB', currentObjective: CommonObjective.Pass })
+            .play('skating');
+
+        this.players = [player1, player2];
+
+        this.playerTitles = this.players.map(player => this.add.text(player.x, player.y, player.getData('title'), PLAYER_TITLE_STYLE).setOrigin(0.5, -2));
 
         this.physics.add.collider(this.puck, radialBorderGroup);
         this.physics.add.collider(this.puck, straightBorderGroup);
@@ -142,18 +150,23 @@ export class Hockey extends Scene {
     }
 
     override update() {
-        this.playerTitle.setPosition(this.player.x, this.player.y);
-        
-        if (this.player.getData('currentObjective') === CommonObjective.CatchPuck) {
-            if (Phaser.Math.Distance.Between(this.player.x, this.player.y, this.puck.x, this.puck.y) > 25) {
-                this.player.setRotation(Math.atan2(this.puck.y - this.player.y, this.puck.x - this.player.x));
-                this.physics.moveTo(this.player, this.puck.x, this.puck.y, 50);
-            } else {
-                this.player.setVelocity(0);
-                this.puck.setVelocity(0);
-            }
-        }
+        this.players.forEach((player, i) => {
+            this.playerTitles.at(i)!.setPosition(player.x, player.y);
 
+            const currentObjective = player.getData('currentObjective');
+
+            if (currentObjective === CommonObjective.CatchPuck) {
+                if (Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 25) {
+                    player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
+                    this.physics.moveTo(player, this.puck.x, this.puck.y, 50);
+                } else {
+                    player.setVelocity(0);
+                    this.puck.setVelocity(0);
+                    player.setData({ hasPuck: true });
+                }
+            }
+        });
+        
 
         const isScoreToLeftNet = Geom.Intersects.PointToLine(new Geom.Point(this.puck.x + PUCK_RADIUS / 2, this.puck.y), this.goalLineLeft, PUCK_RADIUS);
         const isScoreToRightNet = Geom.Intersects.PointToLine(new Geom.Point(this.puck.x - PUCK_RADIUS / 2, this.puck.y), this.goalLineRight, PUCK_RADIUS);
@@ -214,6 +227,11 @@ function drawFieldArc(graphics: GameObjects.Graphics): GameObjects.Graphics {
         .arc(CORNER_D - SIZE_X / 2 - 8, SIZE_Y / 2 - CORNER_D + 8, CORNER_DRAW_R, DEGREE_90, DEGREE_180)
         .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_180)
         .strokePath();
+}
+
+function createPlayerSkatingAnimation(anims: Phaser.Animations.AnimationManager): void {
+    const frames = anims.generateFrameNames('hockey-player', { prefix: 'skating/frame', start: 0, end: 8, zeroPad: 2 });
+    anims.create({ key: 'skating', frames, frameRate: 3, repeat: -1 });
 }
 
 export const startHockey = (parent: string, velX: number, velY: number) => {
