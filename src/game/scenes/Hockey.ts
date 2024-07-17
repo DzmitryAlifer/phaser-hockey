@@ -40,6 +40,7 @@ export class Hockey extends Scene {
 
     create() {
         this.cameras.main.centerOn(0, 0);
+        createPlayerIdleAnimation(this.anims);
         createPlayerSkatingAnimation(this.anims);
 
         // PHYSICS - Immovable
@@ -162,7 +163,7 @@ export class Hockey extends Scene {
                 } else {
                     player.setVelocity(0);
                     this.puck.setVelocity(0);
-                    player.setData({ hasPuck: true });
+                    player.setData({ hasPuck: true }).play('idle');
                 }
             }
         });
@@ -227,6 +228,11 @@ function drawFieldArc(graphics: GameObjects.Graphics): GameObjects.Graphics {
         .arc(CORNER_D - SIZE_X / 2 - 8, SIZE_Y / 2 - CORNER_D + 8, CORNER_DRAW_R, DEGREE_90, DEGREE_180)
         .arc(CORNER_D - SIZE_X / 2 - 8, CORNER_D - SIZE_Y / 2 - 8, CORNER_DRAW_R, DEGREE_180, DEGREE_180)
         .strokePath();
+}
+
+function createPlayerIdleAnimation(anims: Phaser.Animations.AnimationManager): void {
+    const frames = anims.generateFrameNames('hockey-player', { prefix: 'idle/frame', start: 0, end: 8, zeroPad: 2 });
+    anims.create({ key: 'idle', frames, frameRate: 1, repeat: 0 });
 }
 
 function createPlayerSkatingAnimation(anims: Phaser.Animations.AnimationManager): void {

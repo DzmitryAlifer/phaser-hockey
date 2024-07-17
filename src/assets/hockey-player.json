@@ -10,6 +10,27 @@
             "scale": 1,
             "frames": [
                 {
+                    "filename": "idle/frame00",
+                    "rotated": false,
+                    "trimmed": true,
+                    "sourceSize": {
+                        "w": 60,
+                        "h": 70
+                    },
+                    "spriteSourceSize": {
+                        "x": 0,
+                        "y": 0,
+                        "w": 34,
+                        "h": 65
+                    },
+                    "frame": {
+                        "x": 0,
+                        "y": 0,
+                        "w": 34,
+                        "h": 65
+                    }
+                },
+                {
                     "filename": "skating/frame00",
                     "rotated": false,
                     "trimmed": true,
@@ -49,59 +70,6 @@
                         "y": 0,
                         "w": 57,
                         "h": 60
-                    }
-                }
-            ]
-        },
-        {
-            "image": "knight.png",
-            "format": "RGBA8888",
-            "size": {
-                "w": 927,
-                "h": 254
-            },
-            "scale": 1,
-            "frames": [
-                {
-                    "filename": "skate/frame00",
-                    "rotated": false,
-                    "trimmed": true,
-                    "sourceSize": {
-                        "w": 79,
-                        "h": 63
-                    },
-                    "spriteSourceSize": {
-                        "x": 5,
-                        "y": 17,
-                        "w": 44,
-                        "h": 46
-                    },
-                    "frame": {
-                        "x": 402,
-                        "y": 135,
-                        "w": 44,
-                        "h": 46
-                    }
-                },
-                {
-                    "filename": "skate/frame04",
-                    "rotated": false,
-                    "trimmed": true,
-                    "sourceSize": {
-                        "w": 79,
-                        "h": 63
-                    },
-                    "spriteSourceSize": {
-                        "x": 3,
-                        "y": 17,
-                        "w": 47,
-                        "h": 46
-                    },
-                    "frame": {
-                        "x": 449,
-                        "y": 151,
-                        "w": 47,
-                        "h": 46
                     }
                 }
             ]
