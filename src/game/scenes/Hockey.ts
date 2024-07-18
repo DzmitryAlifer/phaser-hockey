@@ -125,6 +125,7 @@ export class Hockey extends Scene {
         
         const player1 = this.physics.add.sprite(-200, 0, '');
         player1
+            .setTint(0x4488dd)
             .setScale(0.8)
             .setCircle(PLAYER_SIZE, player1.width / 2 - 11, player1.height / 2 - 12)
             .setVelocity(velocityX / 2, velocityY / 2)
@@ -134,6 +135,7 @@ export class Hockey extends Scene {
         
         const player2 = this.physics.add.sprite(-100, -100, '');
         player2
+            .setTint(0xff6666)
             .setScale(0.8)
             .setCircle(PLAYER_SIZE, player2.width / 2 - 11, player2.height / 2 - 12)
             // .setVelocity(velocityX / 3, velocityY / 3)
