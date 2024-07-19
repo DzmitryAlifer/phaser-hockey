@@ -123,7 +123,7 @@ export class Hockey extends Scene {
             .setVelocity(velocityX, velocityY)
             .setBounce(0.8);
         
-        const player1 = createPlayer(this.physics, -200, -100, '2 PlayerB', 0x4488dd)
+        const player1 = createPlayer(this.physics, -200, 0, '1 PlayerA', 0x4488dd)
             .setVelocity(velocityX / 2, velocityY / 2)
             .setData({ currentObjective: CommonObjective.CatchPuck })
             .play('skating');
@@ -132,7 +132,7 @@ export class Hockey extends Scene {
             .setData({ currentObjective: CommonObjective.Pass })
             .play('skating');
 
-        const player3 = createPlayer(this.physics, -100, 50, '2 PlayerB', 0x66cc66)
+        const player3 = createPlayer(this.physics, -100, 50, '3 PlayerC', 0x66cc66)
             .play('idle');
 
         this.players = [player1, player2, player3];
