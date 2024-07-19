@@ -26,7 +26,7 @@ export class Hockey extends Scene {
     private playerTitles!: GameObjects.Text[];
 
     constructor() {
-        super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
+        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
     }
 
     preload() {
@@ -123,27 +123,19 @@ export class Hockey extends Scene {
             .setVelocity(velocityX, velocityY)
             .setBounce(0.8);
         
-        const player1 = this.physics.add.sprite(-200, 0, '');
-        player1
-            .setTint(0x4488dd)
-            .setScale(0.8)
-            .setCircle(PLAYER_SIZE, player1.width / 2 - 11, player1.height / 2 - 12)
+        const player1 = createPlayer(this.physics, -200, -100, '2 PlayerB', 0x4488dd)
             .setVelocity(velocityX / 2, velocityY / 2)
-            .setBounce(0.4)
-            .setData({ title: '1 PlayerA', currentObjective: CommonObjective.CatchPuck })
-            .play('skating');
-        
-        const player2 = this.physics.add.sprite(-100, -100, '');
-        player2
-            .setTint(0xff6666)
-            .setScale(0.8)
-            .setCircle(PLAYER_SIZE, player2.width / 2 - 11, player2.height / 2 - 12)
-            // .setVelocity(velocityX / 3, velocityY / 3)
-            .setBounce(0.4)
-            .setData({ title: '2 PlayerB', currentObjective: CommonObjective.Pass })
+            .setData({ currentObjective: CommonObjective.CatchPuck })
             .play('skating');
 
-        this.players = [player1, player2];
+        const player2 = createPlayer(this.physics, 150, 50, '2 PlayerB', 0xff6666)
+            .setData({ currentObjective: CommonObjective.Pass })
+            .play('skating');
+
+        const player3 = createPlayer(this.physics, -100, 50, '2 PlayerB', 0x66cc66)
+            .play('idle');
+
+        this.players = [player1, player2, player3];
 
         this.playerTitles = this.players.map(player => this.add.text(player.x, player.y, player.getData('title'), PLAYER_TITLE_STYLE).setOrigin(0.5, -2));
 
@@ -240,6 +232,16 @@ function createPlayerIdleAnimation(anims: Phaser.Animations.AnimationManager): v
 function createPlayerSkatingAnimation(anims: Phaser.Animations.AnimationManager): void {
     const frames = anims.generateFrameNames('hockey-player', { prefix: 'skating/frame', start: 0, end: 8, zeroPad: 2 });
     anims.create({ key: 'skating', frames, frameRate: 3, repeat: -1 });
+}
+
+function createPlayer(physics: Physics.Arcade.ArcadePhysics, x: number, y: number, title: string, color: number): Types.Physics.Arcade.SpriteWithDynamicBody {
+    const player = physics.add.sprite(x, y, '')
+        .setTint(color)
+        .setScale(0.8)
+        .setBounce(0.4)
+        .setData({ title });
+
+    return player.setCircle(PLAYER_SIZE, player.width / 2 - 12, player.height / 2 - 9);
 }
 
 export const startHockey = (parent: string, velX: number, velY: number) => {
