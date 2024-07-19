@@ -241,7 +241,7 @@ function createPlayer(physics: Physics.Arcade.ArcadePhysics, x: number, y: numbe
         .setBounce(0.4)
         .setData({ title });
 
-    return player.setCircle(PLAYER_SIZE, player.width / 2 - 12, player.height / 2 - 9);
+    return player.setCircle(PLAYER_SIZE, player.width + 4, player.height + 6);
 }
 
 export const startHockey = (parent: string, velX: number, velY: number) => {
