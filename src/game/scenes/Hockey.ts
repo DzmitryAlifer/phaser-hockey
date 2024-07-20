@@ -153,34 +153,34 @@ export class Hockey extends Scene {
             const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
             const puckOwner = this.puck.getData('owner');
 
-            if (currentObjective === CommonObjective.CatchPuck) {
-                if (isPuckTooFar && !puckOwner) {
-                    player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
-                    const velocity = player.getData('velocity');
-                    this.physics.moveTo(player, this.puck.x, this.puck.y, velocity);
-                } else if (!puckOwner) {
-                    player.setVelocity(0)
-                        .play('idle')
-                        .setData({ hasPuck: true, currentObjective: CommonObjective.GivePass });
-                    this.puck.setVelocity(0)
-                        .setPosition(stickPosX, stickPosY)
-                        .setData({ owner: player.getData('title') });
-                } else /* no puck owner */ {
-                    player.setVelocity(0).play('idle');
-                }
-            }
-
-            if (currentObjective === CommonObjective.GivePass) {
-                const passCandidate = findPassCandidate(this.players);
-                pass(this.physics, this.puck, passCandidate);
-            }
-
-            if (currentObjective === CommonObjective.TakePass) {
-                if (!isPuckTooFar && !puckOwner) {
-                    this.puck.setVelocity(0)
-                        .setPosition(stickPosX, stickPosY)
-                        .setData({ owner: player.getData('title') });
-                }
+            switch (player.getData('currentObjective')) {
+                case CommonObjective.CatchPuck:
+                    if (isPuckTooFar && !puckOwner) {
+                        player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
+                        const velocity = player.getData('velocity');
+                        this.physics.moveTo(player, this.puck.x, this.puck.y, velocity);
+                    } else if (!puckOwner) {
+                        player.setVelocity(0)
+                            .play('idle')
+                            .setData({ hasPuck: true, currentObjective: CommonObjective.GivePass });
+                        this.puck.setVelocity(0)
+                            .setPosition(stickPosX, stickPosY)
+                            .setData({ owner: player.getData('title') });
+                    } else /* no puck owner */ {
+                        player.setVelocity(0).play('idle');
+                    }
+                    break;
+                case CommonObjective.GivePass:
+                    const passCandidate = findPassCandidate(this.players);
+                    pass(this.physics, this.puck, passCandidate);
+                    break;
+                case CommonObjective.TakePass:
+                    if (!isPuckTooFar && !puckOwner) {
+                        this.puck.setVelocity(0)
+                            .setPosition(stickPosX, stickPosY)
+                            .setData({ owner: player.getData('title') });
+                    }
+                    break;
             }
         });
 
