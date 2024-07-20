@@ -171,7 +171,7 @@ export class Hockey extends Scene {
                     break;
                 case CommonObjective.GivePass:
                     const passCandidate = findPassCandidate(player, this.players);
-                    pass(this.physics, this.puck, passCandidate);
+                    pass(this.physics, this.puck, player, passCandidate);
                     break;
                 case CommonObjective.TakePass:
                     if (!isPuckTooFar && !puckOwner) {
@@ -273,11 +273,12 @@ function findPassCandidate(playerWithPuck: Types.Physics.Arcade.SpriteWithDynami
     return players.find(player => player !== playerWithPuck)!;
 }
 
-function pass(physics: Physics.Arcade.ArcadePhysics, puck: Types.Physics.Arcade.ImageWithDynamicBody, targetPlayer: Types.Physics.Arcade.SpriteWithDynamicBody): void {
+function pass(physics: Physics.Arcade.ArcadePhysics, puck: Types.Physics.Arcade.ImageWithDynamicBody, playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody, targetPlayer: Types.Physics.Arcade.SpriteWithDynamicBody): void {
     const { x, y } = targetPlayer.getData('stick');
     targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
     puck.setData({ owner: null });
-    physics.moveTo(puck, x, y, 500);
+    physics.moveTo(puck, x, y, 300);
+    setTimeout(() => playerWithPuck.setData({ currentObjective: CommonObjective.TakePass }), 100);
 }
 
 export const startHockey = (parent: string, velX: number, velY: number) => {
