@@ -48,12 +48,14 @@ export const TEAMS: TeamConfig[] = [{
         y: 0,
         velocity: 50,
         currentObjective: CommonObjective.CatchPuck,
+        isLeftSide: true,
     }, {
         title: '2 PlayerB',
         x: 300,
         y: 0,
         velocity: 40,
         currentObjective: CommonObjective.CatchPuck,
+        isLeftSide: true,
     }],
 }, {
     color: 0xff6666,

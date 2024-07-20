@@ -10,6 +10,7 @@ export interface PlayerConfig {
     title: string;
     velocity: number;
     currentObjective?: CommonObjective;
+    isLeftSide?: boolean;
 }
 
 export interface TeamConfig {
