@@ -154,7 +154,6 @@ export class Hockey extends Scene {
                     player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
                     const velocity = player.getData('velocity');
                     this.physics.moveTo(player, this.puck.x, this.puck.y, velocity);
-                    console.log(player)
                 } else if (!puckOwner) {
                     const playerAngle = Phaser.Math.DegToRad(player.angle + 62);
                     const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(playerAngle);
