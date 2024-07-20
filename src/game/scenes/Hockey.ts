@@ -143,6 +143,9 @@ export class Hockey extends Scene {
     override update() {
         this.players.forEach((player, i) => {
             this.playerTitles.at(i)!.setPosition(player.x, player.y);
+            const playerAngle = Phaser.Math.DegToRad(player.angle + 62);
+            const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(playerAngle);
+            const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(playerAngle);
 
             const currentObjective = player.getData('currentObjective');
 
@@ -155,9 +158,6 @@ export class Hockey extends Scene {
                     const velocity = player.getData('velocity');
                     this.physics.moveTo(player, this.puck.x, this.puck.y, velocity);
                 } else if (!puckOwner) {
-                    const playerAngle = Phaser.Math.DegToRad(player.angle + 62);
-                    const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(playerAngle);
-                    const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(playerAngle);
                     player.setVelocity(0)
                         .play('idle')
                         .setData({ hasPuck: true, stick: { x: stickPosX, y: stickPosY } });
