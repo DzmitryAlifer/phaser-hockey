@@ -26,7 +26,7 @@ export class Hockey extends Scene {
     private playerTitles!: GameObjects.Text[];
 
     constructor() {
-        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
+        super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
     }
 
     preload() {
@@ -124,18 +124,22 @@ export class Hockey extends Scene {
             .setBounce(0.8);
         
         const player1 = createPlayer(this.physics, -200, 0, '1 PlayerA', 0x4488dd)
-            .setVelocity(velocityX / 2, velocityY / 2)
-            .setData({ currentObjective: CommonObjective.CatchPuck })
+            .setData({ velocity: 50, currentObjective: CommonObjective.CatchPuck })
             .play('skating');
 
-        const player2 = createPlayer(this.physics, 150, 50, '2 PlayerB', 0xff6666)
-            .setData({ currentObjective: CommonObjective.Pass })
+        const player2 = createPlayer(this.physics, 300, 0, '2 PlayerB', 0xff6666)
+            .setData({ velocity: 40, currentObjective: CommonObjective.CatchPuck })
             .play('skating');
 
-        const player3 = createPlayer(this.physics, -100, 50, '3 PlayerC', 0x66cc66)
-            .play('idle');
+        // const player3 = createPlayer(this.physics, 0, 160, '3 PlayerC', 0x66cc66)
+        //     .setData({ velocity: 50, currentObjective: CommonObjective.CatchPuck })
+        //     .play('skating');
 
-        this.players = [player1, player2, player3];
+        // const player4 = createPlayer(this.physics, 100, 100, '4 PlayerD', 0xFFC0CB)
+        //     .setData({ velocity: 40, currentObjective: CommonObjective.CatchPuck })
+        //     .play('skating');
+
+        this.players = [player1, player2];
 
         this.playerTitles = this.players.map(player => this.add.text(player.x, player.y, player.getData('title'), PLAYER_TITLE_STYLE).setOrigin(0.5, -2));
 
@@ -153,12 +157,17 @@ export class Hockey extends Scene {
             if (currentObjective === CommonObjective.CatchPuck) {
                 if (Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 25) {
                     player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
-                    this.physics.moveTo(player, this.puck.x, this.puck.y, 50);
+                    const velocity = player.getData('velocity');
+                    this.physics.moveTo(player, this.puck.x, this.puck.y, velocity);
                 } else {
                     player.setVelocity(0);
                     this.puck.setVelocity(0);
                     player.setData({ hasPuck: true }).play('idle');
                 }
+            }
+
+            if (player.getData('hasPuck')) {
+
             }
         });
         
