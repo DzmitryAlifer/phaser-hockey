@@ -147,14 +147,26 @@ export class Hockey extends Scene {
             const currentObjective = player.getData('currentObjective');
 
             if (currentObjective === CommonObjective.CatchPuck) {
-                if (Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 25) {
+                const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
+                const puckOwner = this.puck.getData('owner');
+
+                if (isPuckTooFar) {
                     player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
                     const velocity = player.getData('velocity');
                     this.physics.moveTo(player, this.puck.x, this.puck.y, velocity);
-                } else {
-                    player.setVelocity(0);
-                    this.puck.setVelocity(0);
-                    player.setData({ hasPuck: true }).play('idle');
+                    console.log(player)
+                } else if (!puckOwner) {
+                    const playerAngle = Phaser.Math.DegToRad(player.angle + 62);
+                    const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(playerAngle);
+                    const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(playerAngle);
+                    player.setVelocity(0)
+                        .play('idle')
+                        .setData({ hasPuck: true, stick: { x: stickPosX, y: stickPosY } });
+                    this.puck.setVelocity(0)
+                        .setPosition(stickPosX, stickPosY)
+                        .setData({ owner: player.getData('title') });
+                } else /* no puck owner */ {
+                    player.setVelocity(0).play('idle');
                 }
             }
 
@@ -162,6 +174,8 @@ export class Hockey extends Scene {
 
             }
         });
+
+
         
 
         const isScoreToLeftNet = Geom.Intersects.PointToLine(new Geom.Point(this.puck.x + PUCK_RADIUS / 2, this.puck.y), this.goalLineLeft, PUCK_RADIUS);
