@@ -150,7 +150,7 @@ export class Hockey extends Scene {
                 const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
                 const puckOwner = this.puck.getData('owner');
 
-                if (isPuckTooFar) {
+                if (isPuckTooFar && !puckOwner) {
                     player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
                     const velocity = player.getData('velocity');
                     this.physics.moveTo(player, this.puck.x, this.puck.y, velocity);
