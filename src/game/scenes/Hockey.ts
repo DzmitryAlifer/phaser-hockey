@@ -1,19 +1,6 @@
 import { Game, GameObjects, Geom, Physics, Scene, Scenes, Types } from 'phaser';
-import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE } from '../constants';
-
-enum CommonObjective {
-    CatchPuck,
-    GivePass,
-    TakePass,
-}
-
-enum OffensiveObjective {
-    Puck
-}
-
-enum DefensiveObjective {
-    Puck
-}
+import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE, TEAMS } from '../constants';
+import { CommonObjective } from '../types';
 
 export let hockeyScene: Scenes.ScenePlugin;
 let velocityX = 0;
@@ -23,6 +10,7 @@ export class Hockey extends Scene {
     private readonly goalLineLeft = new Geom.Line(-NET_LINE_X_OFFSET - 2, -NET_HALF_WIDTH + 3, -NET_LINE_X_OFFSET - 2, NET_HALF_WIDTH - 3);
     private readonly goalLineRight = new Geom.Line(NET_LINE_X_OFFSET + 2, -NET_HALF_WIDTH + 3, NET_LINE_X_OFFSET + 2, NET_HALF_WIDTH - 3);
     private puck!: Types.Physics.Arcade.ImageWithDynamicBody;
+    private teams!: Types.Physics.Arcade.SpriteWithDynamicBody[][];
     private players!: Types.Physics.Arcade.SpriteWithDynamicBody[];
     private playerTitles!: GameObjects.Text[];
 
@@ -124,16 +112,16 @@ export class Hockey extends Scene {
             .setVelocity(velocityX, velocityY)
             .setBounce(0.8);
         
-        const player1 = createPlayer(this.physics, -200, 0, '1 PlayerA', 0x4488dd)
-            .setData({ velocity: 50, currentObjective: CommonObjective.CatchPuck })
-            .play('skating');
-
-        const player2 = createPlayer(this.physics, 300, 0, '2 PlayerB', 0xff6666)
-            .setData({ velocity: 40, currentObjective: CommonObjective.CatchPuck })
-            .play('skating');
-
-        this.players = [player1, player2];
-
+        this.teams = TEAMS.reduce((teamsAcc, teamConfig) => {
+            const players = teamConfig.playerConfigs.reduce((playersAcc, { x, y, title, velocity, currentObjective }) => {
+                const player = createPlayer(this, x, y, title, teamConfig.color, velocity, currentObjective).play('skating');
+                playersAcc.push(player);
+                return playersAcc;
+            }, [] as Types.Physics.Arcade.SpriteWithDynamicBody[]);
+            teamsAcc.push(players);
+            return teamsAcc;
+        }, [] as Types.Physics.Arcade.SpriteWithDynamicBody[][]);
+        this.players = this.teams.flat();
         this.playerTitles = this.players.map(player => this.add.text(player.x, player.y, player.getData('title'), PLAYER_TITLE_STYLE).setOrigin(0.5, -2));
 
         this.physics.add.collider(this.puck, radialBorderGroup);
@@ -171,7 +159,7 @@ export class Hockey extends Scene {
                     break;
                 case CommonObjective.GivePass:
                     const passCandidate = findPassCandidate(player, this.players);
-                    pass(this.physics, this.puck, player, passCandidate);
+                    passCandidate && pass(this.physics, this.puck, player, passCandidate);
                     break;
                 case CommonObjective.TakePass:
                     if (!isPuckTooFar && !puckOwner) {
@@ -259,18 +247,26 @@ function createPlayerSkatingAnimation(anims: Phaser.Animations.AnimationManager)
     anims.create({ key: 'skating', frames, frameRate: 3, repeat: -1 });
 }
 
-function createPlayer(physics: Physics.Arcade.ArcadePhysics, x: number, y: number, title: string, color: number): Types.Physics.Arcade.SpriteWithDynamicBody {
-    const player = physics.add.sprite(x, y, '')
+function createPlayer(
+    scene: Scene,
+    x: number,
+    y: number,
+    title: string,
+    color: number,
+    velocity?: number,
+    currentObjective?: CommonObjective | undefined
+): Types.Physics.Arcade.SpriteWithDynamicBody {
+    const player = scene.physics.add.sprite(x, y, '')
         .setTint(color)
         .setScale(0.8)
         .setBounce(0.4)
-        .setData({ title });
+        .setData({ title, velocity, currentObjective });
 
     return player.setCircle(PLAYER_SIZE, player.width + 4, player.height + 6);
 }
 
-function findPassCandidate(playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): Types.Physics.Arcade.SpriteWithDynamicBody {
-    return players.find(player => player !== playerWithPuck)!;
+function findPassCandidate(playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): Types.Physics.Arcade.SpriteWithDynamicBody | undefined {
+    return players.find(player => player !== playerWithPuck);
 }
 
 function pass(physics: Physics.Arcade.ArcadePhysics, puck: Types.Physics.Arcade.ImageWithDynamicBody, playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody, targetPlayer: Types.Physics.Arcade.SpriteWithDynamicBody): void {

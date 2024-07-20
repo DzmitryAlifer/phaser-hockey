@@ -1,4 +1,5 @@
 import { Math, Types } from 'phaser';
+import { CommonObjective, TeamConfig } from './types';
 
 export const PUCK_RADIUS = 4;
 export const PUCK_DIAMETER = PUCK_RADIUS * 2;
@@ -37,3 +38,30 @@ export const NET_COLOR = 0x660000;
 export const ICE_RED = 0x660000;
 export const ICE_BLUE = 0x0000dd;
 export const ICE_ALPHA = 0.25;
+
+export const TEAMS: TeamConfig[] = [{
+    color: 0x4488dd,
+    isLeftSide: true,
+    playerConfigs: [{
+        title: '1 PlayerA',
+        x: -200,
+        y: 0,
+        velocity: 50,
+        currentObjective: CommonObjective.CatchPuck,
+    }, {
+        title: '2 PlayerB',
+        x: 300,
+        y: 0,
+        velocity: 40,
+        currentObjective: CommonObjective.CatchPuck,
+    }],
+}, {
+    color: 0xff6666,
+    playerConfigs: [{
+        title: '3 PlayerC',
+        x: 0,
+        y: -200,
+        velocity: 40,
+        currentObjective: CommonObjective.CatchPuck,
+    }],
+}];
