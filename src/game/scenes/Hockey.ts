@@ -3,7 +3,8 @@ import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_
 
 enum CommonObjective {
     CatchPuck,
-    Pass,
+    GivePass,
+    TakePass,
 }
 
 enum OffensiveObjective {
@@ -146,13 +147,13 @@ export class Hockey extends Scene {
             const playerAngle = Phaser.Math.DegToRad(player.angle + 62);
             const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(playerAngle);
             const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(playerAngle);
+            player.setData({ stick: { x: stickPosX, y: stickPosY } });
 
             const currentObjective = player.getData('currentObjective');
+            const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
+            const puckOwner = this.puck.getData('owner');
 
             if (currentObjective === CommonObjective.CatchPuck) {
-                const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
-                const puckOwner = this.puck.getData('owner');
-
                 if (isPuckTooFar && !puckOwner) {
                     player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
                     const velocity = player.getData('velocity');
@@ -160,7 +161,7 @@ export class Hockey extends Scene {
                 } else if (!puckOwner) {
                     player.setVelocity(0)
                         .play('idle')
-                        .setData({ hasPuck: true, stick: { x: stickPosX, y: stickPosY } });
+                        .setData({ hasPuck: true, currentObjective: CommonObjective.GivePass });
                     this.puck.setVelocity(0)
                         .setPosition(stickPosX, stickPosY)
                         .setData({ owner: player.getData('title') });
@@ -169,8 +170,17 @@ export class Hockey extends Scene {
                 }
             }
 
-            if (player.getData('hasPuck')) {
+            if (currentObjective === CommonObjective.GivePass) {
+                const passCandidate = findPassCandidate(this.players);
+                pass(this.physics, this.puck, passCandidate);
+            }
 
+            if (currentObjective === CommonObjective.TakePass) {
+                if (!isPuckTooFar && !puckOwner) {
+                    this.puck.setVelocity(0)
+                        .setPosition(stickPosX, stickPosY)
+                        .setData({ owner: player.getData('title') });
+                }
             }
         });
 
@@ -256,6 +266,17 @@ function createPlayer(physics: Physics.Arcade.ArcadePhysics, x: number, y: numbe
         .setData({ title });
 
     return player.setCircle(PLAYER_SIZE, player.width + 4, player.height + 6);
+}
+
+function findPassCandidate(players: Types.Physics.Arcade.SpriteWithDynamicBody[]): Types.Physics.Arcade.SpriteWithDynamicBody {
+    return players.at(1)!;
+}
+
+function pass(physics: Physics.Arcade.ArcadePhysics, puck: Types.Physics.Arcade.ImageWithDynamicBody, targetPlayer: Types.Physics.Arcade.SpriteWithDynamicBody): void {
+    const { x, y } = targetPlayer.getData('stick');
+    targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
+    puck.setData({ owner: null });
+    physics.moveTo(puck, x, y, 500);
 }
 
 export const startHockey = (parent: string, velX: number, velY: number) => {
