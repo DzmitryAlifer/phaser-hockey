@@ -149,7 +149,6 @@ export class Hockey extends Scene {
             const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(playerAngle);
             player.setData({ stick: { x: stickPosX, y: stickPosY } });
 
-            const currentObjective = player.getData('currentObjective');
             const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
             const puckOwner = this.puck.getData('owner');
 
@@ -171,7 +170,7 @@ export class Hockey extends Scene {
                     }
                     break;
                 case CommonObjective.GivePass:
-                    const passCandidate = findPassCandidate(this.players);
+                    const passCandidate = findPassCandidate(player, this.players);
                     pass(this.physics, this.puck, passCandidate);
                     break;
                 case CommonObjective.TakePass:
@@ -179,6 +178,8 @@ export class Hockey extends Scene {
                         this.puck.setVelocity(0)
                             .setPosition(stickPosX, stickPosY)
                             .setData({ owner: player.getData('title') });
+
+                        player.setData({ currentObjective: CommonObjective.GivePass });
                     }
                     break;
             }
@@ -268,8 +269,8 @@ function createPlayer(physics: Physics.Arcade.ArcadePhysics, x: number, y: numbe
     return player.setCircle(PLAYER_SIZE, player.width + 4, player.height + 6);
 }
 
-function findPassCandidate(players: Types.Physics.Arcade.SpriteWithDynamicBody[]): Types.Physics.Arcade.SpriteWithDynamicBody {
-    return players.at(1)!;
+function findPassCandidate(playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): Types.Physics.Arcade.SpriteWithDynamicBody {
+    return players.find(player => player !== playerWithPuck)!;
 }
 
 function pass(physics: Physics.Arcade.ArcadePhysics, puck: Types.Physics.Arcade.ImageWithDynamicBody, targetPlayer: Types.Physics.Arcade.SpriteWithDynamicBody): void {
