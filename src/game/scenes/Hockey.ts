@@ -106,7 +106,7 @@ export class Hockey extends Scene {
 
 
         // PHISICS - Movable
-        this.puck = this.physics.add.image(0, 0, 'puck')
+        this.puck = this.physics.add.image(-100, 0, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
             .setCircle(PUCK_IMG_SIZE / 2)
             .setVelocity(velocityX, velocityY)
@@ -255,7 +255,7 @@ function createPlayer(
     color: number,
     velocity?: number,
     currentObjective?: CommonObjective | undefined,
-    isLeftSide?: boolean,
+    isLeftSide?: boolean
 ): Types.Physics.Arcade.SpriteWithDynamicBody {
     const player = scene.physics.add.sprite(x, y, '')
         .setTint(color)
@@ -266,11 +266,22 @@ function createPlayer(
     return player.setCircle(PLAYER_SIZE, player.width + 4, player.height + 6);
 }
 
-function findPassCandidate(playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): Types.Physics.Arcade.SpriteWithDynamicBody | undefined {
-    return players.find(player => player !== playerWithPuck && player.getData('isLeftSide') === playerWithPuck.getData('isLeftSide'));
+function findPassCandidate(
+    playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody,
+    players: Types.Physics.Arcade.SpriteWithDynamicBody[]
+): Types.Physics.Arcade.SpriteWithDynamicBody | undefined {
+    const teamPlayers = players.filter(player => player !== playerWithPuck && player.getData('isLeftSide') === playerWithPuck.getData('isLeftSide'));
+    const randomIndex = Math.floor(Math.random() * teamPlayers.length);
+    
+    return teamPlayers.at(randomIndex);
 }
 
-function pass(physics: Physics.Arcade.ArcadePhysics, puck: Types.Physics.Arcade.ImageWithDynamicBody, playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody, targetPlayer: Types.Physics.Arcade.SpriteWithDynamicBody): void {
+function pass(
+    physics: Physics.Arcade.ArcadePhysics,
+    puck: Types.Physics.Arcade.ImageWithDynamicBody,
+    playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody,
+    targetPlayer: Types.Physics.Arcade.SpriteWithDynamicBody
+): void {
     const { x, y } = targetPlayer.getData('stick');
     targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
     puck.setData({ owner: null });
