@@ -26,7 +26,7 @@ export class Hockey extends Scene {
     private playerTitles!: GameObjects.Text[];
 
     constructor() {
-        super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
+        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
     }
 
     preload() {
