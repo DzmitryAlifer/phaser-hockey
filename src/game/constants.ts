@@ -16,6 +16,8 @@ export const NET_LINE_X_OFFSET = SIZE_X / 2 - SIZE_X / 15;
 export const GOALIE_HALF_CIRCLE_RADIUS = CIRCLE_RADIUS / 2;
 export const NET_WIDTH = GOALIE_HALF_CIRCLE_RADIUS * 1.4;
 export const NET_HALF_WIDTH = NET_WIDTH / 2;
+export const LEFT_NET_POINT = { x: -NET_LINE_X_OFFSET, y: 0 };
+export const RIGHT_NET_POINT = { x: NET_LINE_X_OFFSET, y: 0 };
 export const NET_DEPTH = NET_HALF_WIDTH * 0.6;
 export const BLUE_LINE_X_OFFSET = SIZE_X / 8;
 export const FACE_OFF_SPOT_SIZE = 5;
@@ -66,11 +68,11 @@ export const TEAMS: TeamConfig[] = [{
     }],
 }, {
     color: 0xff6666,
-    playerConfigs: [{
+    playerConfigs: [/*{
         title: 'TeamB - 1',
         x: 0,
         y: -200,
-        velocity: 40,
+        velocity: 30,
         currentObjective: CommonObjective.CatchPuck,
-    }],
+    }*/],
 }];

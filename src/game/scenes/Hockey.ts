@@ -282,11 +282,12 @@ function pass(
     playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody,
     targetPlayer: Types.Physics.Arcade.SpriteWithDynamicBody
 ): void {
+    if (playerWithPuck.getData('title') === targetPlayer.getData('title')) return;
     const { x, y } = targetPlayer.getData('stick');
     targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
     puck.setData({ owner: null });
-    physics.moveTo(puck, x, y, 300);
-    setTimeout(() => playerWithPuck.setData({ currentObjective: CommonObjective.TakePass }), 100);
+    physics.moveTo(puck, x, y, 500);
+    playerWithPuck.setData({ currentObjective: null })
 }
 
 export const startHockey = (parent: string, velX: number, velY: number) => {
