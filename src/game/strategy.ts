@@ -46,3 +46,20 @@ function shoot(
     physics.moveTo(puck, x, y, shooting * 5);
     player.setData({ currentObjective: null });
 }
+
+export function runAttack(
+    physics: Physics.Arcade.ArcadePhysics,
+    player: Types.Physics.Arcade.SpriteWithDynamicBody,
+    players: Types.Physics.Arcade.SpriteWithDynamicBody[],
+    puck: Types.Physics.Arcade.ImageWithDynamicBody
+): void {
+    if (isWorthShooting(player)) {
+        shoot(physics, player, puck);
+    } else if (isWorthPassing(player, players)) {
+        // pass
+    } else if (isWorthMovingWithPuck(player)) {
+        // move with puck
+    } else {
+        shoot(physics, player, puck);
+    }
+}

@@ -63,7 +63,7 @@ export const TEAMS: TeamConfig[] = [{
             y: 120,
             velocity: 30,
             shooting: 50,
-            // currentObjective: CommonObjective.CatchPuck,
+            currentObjective: CommonObjective.CatchPuck,
             isLeftSide: true,
         },
         // {
