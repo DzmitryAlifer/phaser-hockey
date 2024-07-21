@@ -1,4 +1,4 @@
-import { Geom, Types } from 'phaser';
+import { Geom, Physics, Types } from 'phaser';
 import { LEFT_NET_POINT, RIGHT_NET_POINT } from './constants';
 import { Position } from './types';
 import { POSITION_OFFENSIVE } from './position';
@@ -35,6 +35,14 @@ function isOnPosition(player: Types.Physics.Arcade.SpriteWithDynamicBody): boole
     return Geom.Rectangle.Contains(positionRect!, player.x, player.y);
 }
 
-function shoot(player: Types.Physics.Arcade.SpriteWithDynamicBody): void {
-
+function shoot(
+    physics: Physics.Arcade.ArcadePhysics,
+    player: Types.Physics.Arcade.SpriteWithDynamicBody,
+    puck: Types.Physics.Arcade.ImageWithDynamicBody
+): void {
+    puck.setData({ owner: null });
+    const { x, y } = player.getData('isLeftSide') ? RIGHT_NET_POINT : LEFT_NET_POINT;
+    const shooting = player.getData('shooting');
+    physics.moveTo(puck, x, y, shooting * 5);
+    player.setData({ currentObjective: null });
 }

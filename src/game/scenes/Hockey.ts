@@ -287,7 +287,7 @@ function pass(
     targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
     puck.setData({ owner: null });
     physics.moveTo(puck, x, y, 500);
-    playerWithPuck.setData({ currentObjective: null })
+    playerWithPuck.setData({ currentObjective: null });
 }
 
 export const startHockey = (parent: string, velX: number, velY: number) => {
