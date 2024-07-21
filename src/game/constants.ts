@@ -51,6 +51,7 @@ export const TEAMS: TeamConfig[] = [{
         x: -200,
         y: 0,
         velocity: 50,
+        shooting: 100,
         currentObjective: CommonObjective.CatchPuck,
         isLeftSide: true,
     }, {
@@ -59,6 +60,7 @@ export const TEAMS: TeamConfig[] = [{
         x: 300,
         y: 0,
         velocity: 10,
+        shooting: 50,
         currentObjective: CommonObjective.CatchPuck,
         isLeftSide: true,
     }, {
@@ -67,6 +69,7 @@ export const TEAMS: TeamConfig[] = [{
         x: 100,
         y: 150,
         velocity: 10,
+        shooting: 30,
         currentObjective: CommonObjective.CatchPuck,
         isLeftSide: true,
     }],

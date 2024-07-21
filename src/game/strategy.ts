@@ -12,7 +12,7 @@ function scoringChance(player: Types.Physics.Arcade.SpriteWithDynamicBody): numb
     const netPoint = player.getData('isLeftSide') ? RIGHT_NET_POINT : LEFT_NET_POINT;
     const distance = Phaser.Math.Distance.Between(player.x, player.y, netPoint.x, netPoint.y);
 
-    return shooting / distance
+    return shooting / distance;
 }
 
 function isWorthPassing(player: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): boolean {
@@ -33,4 +33,8 @@ function isOnPosition(player: Types.Physics.Arcade.SpriteWithDynamicBody): boole
     const positionRect = POSITION_OFFENSIVE.get(position);
 
     return Geom.Rectangle.Contains(positionRect!, player.x, player.y);
+}
+
+function shoot(player: Types.Physics.Arcade.SpriteWithDynamicBody): void {
+
 }
