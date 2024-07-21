@@ -4,10 +4,13 @@ export enum CommonObjective {
     TakePass,
 }
 
+export enum Position { G, LD, RD, LW, RW, C }
+
 export interface PlayerConfig {
     x: number;
     y: number;
     title: string;
+    position: Position;
     velocity: number;
     currentObjective?: CommonObjective;
     isLeftSide?: boolean;

@@ -1,5 +1,5 @@
 import { Math, Types } from 'phaser';
-import { CommonObjective, TeamConfig } from './types';
+import { CommonObjective, Position, TeamConfig } from './types';
 
 export const PUCK_RADIUS = 4;
 export const PUCK_DIAMETER = PUCK_RADIUS * 2;
@@ -20,6 +20,7 @@ export const LEFT_NET_POINT = { x: -NET_LINE_X_OFFSET, y: 0 };
 export const RIGHT_NET_POINT = { x: NET_LINE_X_OFFSET, y: 0 };
 export const NET_DEPTH = NET_HALF_WIDTH * 0.6;
 export const BLUE_LINE_X_OFFSET = SIZE_X / 8;
+export const HALF_ZONE_OFFSET = (NET_LINE_X_OFFSET - BLUE_LINE_X_OFFSET) / 2;
 export const FACE_OFF_SPOT_SIZE = 5;
 export const BLOCK_AMOUNT = 12;
 
@@ -46,6 +47,7 @@ export const TEAMS: TeamConfig[] = [{
     isLeftSide: true,
     playerConfigs: [{
         title: 'TeamA - 1',
+        position: Position.LW,
         x: -200,
         y: 0,
         velocity: 50,
@@ -53,6 +55,7 @@ export const TEAMS: TeamConfig[] = [{
         isLeftSide: true,
     }, {
         title: 'TeamA - 2',
+        position: Position.RW,
         x: 300,
         y: 0,
         velocity: 10,
@@ -60,6 +63,7 @@ export const TEAMS: TeamConfig[] = [{
         isLeftSide: true,
     }, {
         title: 'TeamA - 3',
+        position: Position.C,
         x: 100,
         y: 150,
         velocity: 10,
