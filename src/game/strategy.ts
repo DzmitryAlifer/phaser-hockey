@@ -76,7 +76,13 @@ function moveWithPuck(
     player: Types.Physics.Arcade.SpriteWithDynamicBody,
     puck: Types.Physics.Arcade.ImageWithDynamicBody
 ): void {
-   
+    const speed = player.getData('velocity') * 0.8;
+    const isLeftTeam = player.getData('isLeftSide');
+    const position = player.getData('position');
+    let { centerX, centerY } = POSITION_OFFENSIVE.get(position)!;
+    if (!isLeftTeam) centerX *= -1;
+    physics.moveTo(player, centerX, centerY, speed);
+    physics.moveTo(puck, centerX, centerY, speed);
 }
 
 export function runAttack(
