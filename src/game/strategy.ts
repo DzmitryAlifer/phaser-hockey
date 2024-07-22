@@ -1,5 +1,5 @@
 import { Geom, Physics, Types } from 'phaser';
-import { LEFT_NET_POINT, RIGHT_NET_POINT } from './constants';
+import { LEFT_NET_POINT, PLAYER_SIZE, RIGHT_NET_POINT } from './constants';
 import { CommonObjective, Position } from './types';
 import { POSITION_OFFENSIVE } from './position';
 
@@ -100,5 +100,60 @@ export function runAttack(
     } else {
         shoot(physics, player, puck);
     }
+}
+
+function getPlayerToPuckDistance(
+    player: Types.Physics.Arcade.SpriteWithDynamicBody,
+    puck: Types.Physics.Arcade.ImageWithDynamicBody
+): number {
+    return Phaser.Math.Distance.Between(player.x, player.y, puck.x, puck.y);
+}
+
+export function findPlayerClosestToPuck(
+    players: Types.Physics.Arcade.SpriteWithDynamicBody[],
+    puck: Types.Physics.Arcade.ImageWithDynamicBody
+): Types.Physics.Arcade.SpriteWithDynamicBody {
+    return players.reduce((closestPlayer, player) =>
+        getPlayerToPuckDistance(player, puck) > getPlayerToPuckDistance(closestPlayer, puck) ? player : closestPlayer,
+        players.at(0)!
+    );
+}
+
+export function setPlayerStickPosition(player: Types.Physics.Arcade.SpriteWithDynamicBody): void {
+    const playerAngle = Phaser.Math.DegToRad(player.angle + 62);
+    const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(playerAngle);
+    const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(playerAngle);
+    player.setData({ stick: { x: stickPosX, y: stickPosY } });
+}
+
+export function catchPuck(
+    physics: Physics.Arcade.ArcadePhysics,
+    players: Types.Physics.Arcade.SpriteWithDynamicBody[],
+    puck: Types.Physics.Arcade.ImageWithDynamicBody
+): Types.Physics.Arcade.SpriteWithDynamicBody | null {
+    const player = findPlayerClosestToPuck(players, puck);
+    const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, puck.x, puck.y) > 35;
+    const puckOwner = puck.getData('owner');
+    const playerAngle = Phaser.Math.DegToRad(player.angle + 62);
+    const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(playerAngle);
+    const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(playerAngle);
+    player.setData({ stick: { x: stickPosX, y: stickPosY } });
+
+    if (isPuckTooFar && !puckOwner) {
+        player.setRotation(Math.atan2(puck.y - player.y, puck.x - player.x));
+        const velocity = player.getData('velocity');
+        physics.moveTo(player, puck.x, puck.y, velocity);
+        return null;
+    } else if (!puckOwner) {
+        player.setVelocity(0)
+            .play('idle')
+            .setData({ hasPuck: true, currentObjective: CommonObjective.GivePass });
+        puck.setVelocity(0)
+            .setPosition(stickPosX, stickPosY)
+            .setData({ owner: player.getData('title') });
+        return player;
+    }
+
+    return null;
 }
 
