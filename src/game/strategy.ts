@@ -65,7 +65,7 @@ export function pass(
 ): void {
     if (playerWithPuck.getData('title') === targetPlayer.getData('title')) return;
     const { x, y } = targetPlayer.getData('stick');
-    targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
+    targetPlayer.setData({ currentObjective: null });
     puck.setData({ owner: null });
     physics.moveTo(puck, x, y, 500);
     playerWithPuck.setData({ currentObjective: null });
@@ -82,7 +82,6 @@ function moveWithPuck(
     let { centerX, centerY } = POSITION_OFFENSIVE.get(position)!;
     if (!isLeftTeam) centerX *= -1;
     physics.moveTo(player, centerX, centerY, speed);
-    physics.moveTo(puck, centerX, centerY, speed);
 }
 
 export function runAttack(

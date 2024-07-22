@@ -1,7 +1,7 @@
 import { Game, GameObjects, Geom, Physics, Scene, Scenes, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE, TEAMS } from '../constants';
-import { CommonObjective } from '../types';
-import { findPassCandidate, pass } from '../strategy';
+import { CommonObjective, Position } from '../types';
+import { findPassCandidate, pass, runAttack } from '../strategy';
 
 export let hockeyScene: Scenes.ScenePlugin;
 let velocityX = 0;
@@ -114,8 +114,8 @@ export class Hockey extends Scene {
             .setBounce(0.8);
         
         this.teams = TEAMS.reduce((teamsAcc, teamConfig) => {
-            const players = teamConfig.playerConfigs.reduce((playersAcc, { x, y, title, velocity, currentObjective, isLeftSide }) => {
-                const player = createPlayer(this, x, y, title, teamConfig.color, velocity, currentObjective, isLeftSide).play('skating');
+            const players = teamConfig.playerConfigs.reduce((playersAcc, { x, y, title, position, velocity, currentObjective, isLeftSide }) => {
+                const player = createPlayer(this, x, y, title, teamConfig.color, position, velocity, currentObjective, isLeftSide).play('skating');
                 playersAcc.push(player);
                 return playersAcc;
             }, [] as Types.Physics.Arcade.SpriteWithDynamicBody[]);
@@ -142,38 +142,38 @@ export class Hockey extends Scene {
             const puckOwner = this.puck.getData('owner');
 
             switch (player.getData('currentObjective')) {
-                case CommonObjective.CatchPuck:
-                    if (isPuckTooFar && !puckOwner) {
-                        player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
-                        const velocity = player.getData('velocity');
-                        this.physics.moveTo(player, this.puck.x, this.puck.y, velocity);
-                    } else if (!puckOwner) {
-                        player.setVelocity(0)
-                            .play('idle')
-                            .setData({ hasPuck: true, currentObjective: CommonObjective.GivePass });
-                        this.puck.setVelocity(0)
-                            .setPosition(stickPosX, stickPosY)
-                            .setData({ owner: player.getData('title') });
-                    } else /* no puck owner */ {
-                        player.setVelocity(0).play('idle');
-                    }
-                    break;
-                case CommonObjective.GivePass:
-                    const passCandidate = findPassCandidate(player, this.players);
-                    passCandidate && pass(this.physics, this.puck, player, passCandidate);
-                    break;
+            //     case CommonObjective.CatchPuck:
+            //         if (isPuckTooFar && !puckOwner) {
+            //             player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
+            //             const velocity = player.getData('velocity');
+            //             this.physics.moveTo(player, this.puck.x, this.puck.y, velocity);
+            //         } else if (!puckOwner) {
+            //             player.setVelocity(0)
+            //                 .play('idle')
+            //                 .setData({ hasPuck: true, currentObjective: CommonObjective.GivePass });
+            //             this.puck.setVelocity(0)
+            //                 .setPosition(stickPosX, stickPosY)
+            //                 .setData({ owner: player.getData('title') });
+            //         } else /* no puck owner */ {
+            //             player.setVelocity(0).play('idle');
+            //         }
+            //         break;
+            //     case CommonObjective.GivePass:
+            //         const passCandidate = findPassCandidate(player, this.players);
+            //         passCandidate && pass(this.physics, this.puck, player, passCandidate);
+            //         break;
                 case CommonObjective.TakePass:
                     if (!isPuckTooFar && !puckOwner) {
                         this.puck.setVelocity(0)
                             .setPosition(stickPosX, stickPosY)
                             .setData({ owner: player.getData('title') });
 
-                        player.setData({ currentObjective: CommonObjective.GivePass });
+                        // player.setData({ currentObjective: CommonObjective.GivePass });
                     }
                     break;
             }
 
-
+            runAttack(this.physics, player, this.players, this.puck);
         });
 
 
@@ -256,6 +256,7 @@ function createPlayer(
     y: number,
     title: string,
     color: number,
+    position: Position,
     velocity?: number,
     currentObjective?: CommonObjective | undefined,
     isLeftSide?: boolean
@@ -264,7 +265,7 @@ function createPlayer(
         .setTint(color)
         .setScale(0.8)
         .setBounce(0.4)
-        .setData({ title, velocity, currentObjective, isLeftSide: !!isLeftSide });
+        .setData({ title, position, velocity, currentObjective, isLeftSide: !!isLeftSide });
 
     return player.setCircle(PLAYER_SIZE, player.width + 4, player.height + 6);
 }
