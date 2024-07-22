@@ -71,6 +71,14 @@ export function pass(
     playerWithPuck.setData({ currentObjective: null });
 }
 
+function moveWithPuck(
+    physics: Physics.Arcade.ArcadePhysics,
+    player: Types.Physics.Arcade.SpriteWithDynamicBody,
+    puck: Types.Physics.Arcade.ImageWithDynamicBody
+): void {
+   
+}
+
 export function runAttack(
     physics: Physics.Arcade.ArcadePhysics,
     player: Types.Physics.Arcade.SpriteWithDynamicBody,
@@ -83,7 +91,7 @@ export function runAttack(
         const targetPlayer = findPassCandidate(player, players)!;
         pass(physics, puck, player, targetPlayer);
     } else if (isWorthMovingWithPuck(player)) {
-        // move with puck
+        moveWithPuck(physics, player, puck);
     } else {
         shoot(physics, player, puck);
     }
