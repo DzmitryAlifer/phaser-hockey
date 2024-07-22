@@ -1,6 +1,7 @@
 import { Game, GameObjects, Geom, Physics, Scene, Scenes, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE, TEAMS } from '../constants';
 import { CommonObjective } from '../types';
+import { findPassCandidate, pass } from '../strategy';
 
 export let hockeyScene: Scenes.ScenePlugin;
 let velocityX = 0;
@@ -266,30 +267,6 @@ function createPlayer(
         .setData({ title, velocity, currentObjective, isLeftSide: !!isLeftSide });
 
     return player.setCircle(PLAYER_SIZE, player.width + 4, player.height + 6);
-}
-
-function findPassCandidate(
-    playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody,
-    players: Types.Physics.Arcade.SpriteWithDynamicBody[]
-): Types.Physics.Arcade.SpriteWithDynamicBody | undefined {
-    const teamPlayers = players.filter(player => player !== playerWithPuck && player.getData('isLeftSide') === playerWithPuck.getData('isLeftSide'));
-    const randomIndex = Math.floor(Math.random() * teamPlayers.length);
-    
-    return teamPlayers.at(randomIndex);
-}
-
-function pass(
-    physics: Physics.Arcade.ArcadePhysics,
-    puck: Types.Physics.Arcade.ImageWithDynamicBody,
-    playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody,
-    targetPlayer: Types.Physics.Arcade.SpriteWithDynamicBody
-): void {
-    if (playerWithPuck.getData('title') === targetPlayer.getData('title')) return;
-    const { x, y } = targetPlayer.getData('stick');
-    targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
-    puck.setData({ owner: null });
-    physics.moveTo(puck, x, y, 500);
-    playerWithPuck.setData({ currentObjective: null });
 }
 
 export const startHockey = (parent: string, velX: number, velY: number) => {

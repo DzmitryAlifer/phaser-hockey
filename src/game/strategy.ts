@@ -1,6 +1,6 @@
 import { Geom, Physics, Types } from 'phaser';
 import { LEFT_NET_POINT, RIGHT_NET_POINT } from './constants';
-import { Position } from './types';
+import { CommonObjective, Position } from './types';
 import { POSITION_OFFENSIVE } from './position';
 
 function isWorthShooting(player: Types.Physics.Arcade.SpriteWithDynamicBody): boolean {
@@ -47,6 +47,30 @@ function shoot(
     player.setData({ currentObjective: null });
 }
 
+export function findPassCandidate(
+    playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody,
+    players: Types.Physics.Arcade.SpriteWithDynamicBody[]
+): Types.Physics.Arcade.SpriteWithDynamicBody | undefined {
+    const teamPlayers = players.filter(player => player !== playerWithPuck && player.getData('isLeftSide') === playerWithPuck.getData('isLeftSide'));
+    const randomIndex = Math.floor(Math.random() * teamPlayers.length);
+
+    return teamPlayers.at(randomIndex);
+}
+
+export function pass(
+    physics: Physics.Arcade.ArcadePhysics,
+    puck: Types.Physics.Arcade.ImageWithDynamicBody,
+    playerWithPuck: Types.Physics.Arcade.SpriteWithDynamicBody,
+    targetPlayer: Types.Physics.Arcade.SpriteWithDynamicBody
+): void {
+    if (playerWithPuck.getData('title') === targetPlayer.getData('title')) return;
+    const { x, y } = targetPlayer.getData('stick');
+    targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
+    puck.setData({ owner: null });
+    physics.moveTo(puck, x, y, 500);
+    playerWithPuck.setData({ currentObjective: null });
+}
+
 export function runAttack(
     physics: Physics.Arcade.ArcadePhysics,
     player: Types.Physics.Arcade.SpriteWithDynamicBody,
@@ -56,10 +80,12 @@ export function runAttack(
     if (isWorthShooting(player)) {
         shoot(physics, player, puck);
     } else if (isWorthPassing(player, players)) {
-        // pass
+        const targetPlayer = findPassCandidate(player, players)!;
+        pass(physics, puck, player, targetPlayer);
     } else if (isWorthMovingWithPuck(player)) {
         // move with puck
     } else {
         shoot(physics, player, puck);
     }
 }
+
