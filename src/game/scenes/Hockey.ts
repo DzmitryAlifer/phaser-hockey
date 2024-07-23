@@ -108,7 +108,7 @@ export class Hockey extends Scene {
 
 
         // PHISICS - Movable
-        this.puck = this.physics.add.image(-200, 100, 'puck')
+        this.puck = this.physics.add.image(-270, 100, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
             .setCircle(PUCK_IMG_SIZE / 2)
             // .setVelocity(velocityX, velocityY)

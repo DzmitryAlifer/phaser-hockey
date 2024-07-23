@@ -114,7 +114,7 @@ export function findPlayerClosestToPuck(
     puck: Types.Physics.Arcade.ImageWithDynamicBody
 ): Types.Physics.Arcade.SpriteWithDynamicBody {
     return players.reduce((closestPlayer, player) =>
-        getPlayerToPuckDistance(player, puck) > getPlayerToPuckDistance(closestPlayer, puck) ? player : closestPlayer,
+        getPlayerToPuckDistance(player, puck) < getPlayerToPuckDistance(closestPlayer, puck) ? player : closestPlayer,
         players.at(0)!
     );
 }
