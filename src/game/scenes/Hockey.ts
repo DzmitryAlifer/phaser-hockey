@@ -170,7 +170,7 @@ export class Hockey extends Scene {
                         break;
                     case CommonObjective.MoveWithPuckToPosition:
                         runAttack(this.physics, player, this.players, this.puck);
-                        this.physics.moveTo(player, centerX, centerY, speed * 0.4);
+                        this.physics.moveTo(player, centerX, centerY, speed * 0.5);
                         break;
                 }
             });

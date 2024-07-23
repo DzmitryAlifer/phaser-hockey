@@ -17,7 +17,11 @@ function scoringChance(player: Types.Physics.Arcade.SpriteWithDynamicBody): numb
 
 function isWorthPassing(player: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): boolean {
     const partner = getPlayerInBestPosition(players);
-    return !!partner && partner.getData('title') !== player.getData('title');
+    if (!partner) return false;
+    const isCurrentPlayerInBestShootingPosition = partner.getData('title') === player.getData('title');
+    const currentPlayerScoreChance = scoringChance(player);
+    const comparablePlayerScoringChance = scoringChance(partner);
+    return !isCurrentPlayerInBestShootingPosition && (currentPlayerScoreChance * 1.0 < comparablePlayerScoringChance);
 }
 
 function getPlayerInBestPosition(players: Types.Physics.Arcade.SpriteWithDynamicBody[]): Types.Physics.Arcade.SpriteWithDynamicBody | undefined {
