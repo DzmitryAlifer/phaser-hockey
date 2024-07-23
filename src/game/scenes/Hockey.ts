@@ -111,7 +111,6 @@ export class Hockey extends Scene {
         this.puck = this.physics.add.image(-270, 100, 'puck')
             .setScale(PUCK_RADIUS / PUCK_IMG_SIZE * 2)
             .setCircle(PUCK_IMG_SIZE / 2)
-            // .setVelocity(velocityX, velocityY)
             .setBounce(0.8);
         
         this.teams = TEAMS.reduce((teamsAcc, teamConfig) => {
@@ -270,6 +269,7 @@ function createPlayer(
         .setTint(color)
         .setScale(0.8)
         .setBounce(0.4)
+        .setAngle(isLeftSide ? 0 : 180)
         .setData({ title, position, shooting, velocity, currentObjective, isLeftSide: !!isLeftSide });
 
     return player.setCircle(PLAYER_SIZE, player.width + 4, player.height + 6);

@@ -4,6 +4,7 @@ export enum CommonObjective {
     MoveWithPuckToPosition,
     GivePass,
     TakePass,
+    Checking,
 }
 
 export enum Position { G, LD, RD, LW, RW, C }

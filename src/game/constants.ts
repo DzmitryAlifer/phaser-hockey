@@ -53,7 +53,6 @@ export const TEAMS: TeamConfig[] = [{
             y: -100,
             velocity: 30,
             shooting: 100,
-            // currentObjective: CommonObjective.CatchPuck,
             isLeftSide: true,
         },
         {
@@ -66,28 +65,25 @@ export const TEAMS: TeamConfig[] = [{
             currentObjective: CommonObjective.CatchPuck,
             isLeftSide: true,
         },
-        // {
-        //     title: 'TeamA - 3',
-        //     position: Position.C,
-        //     x: 100,
-        //     y: 150,
-        //     velocity: 10,
-        //     shooting: 30,
-        //     currentObjective: CommonObjective.CatchPuck,
-        //     isLeftSide: true,
-        // }
     ],
 }, {
     color: 0xff6666,
     playerConfigs: [
-        // {
-        //     title: 'TeamB - 1',
-        //     position: Position.LD,
-        //     x: 0,
-        //     y: -200,
-        //     velocity: 30,
-        //     shooting: 30,
-        //     currentObjective: CommonObjective.CatchPuck,
-        // }
+        {
+            title: 'TeamB - 1',
+            position: Position.LD,
+            x: 50,
+            y: -100,
+            velocity: 0,
+            shooting: 30,
+        },
+        {
+            title: 'TeamB - 2',
+            position: Position.RD,
+            x: 50,
+            y: 120,
+            velocity: 0,
+            shooting: 30,
+        }
     ],
 }];
