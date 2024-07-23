@@ -115,8 +115,8 @@ export class Hockey extends Scene {
             .setBounce(0.8);
         
         this.teams = TEAMS.reduce((teamsAcc, teamConfig) => {
-            const players = teamConfig.playerConfigs.reduce((playersAcc, { x, y, title, position, velocity, currentObjective, isLeftSide }) => {
-                const player = createPlayer(this, x, y, title, teamConfig.color, position, velocity, currentObjective, isLeftSide).play('skating');
+            const players = teamConfig.playerConfigs.reduce((playersAcc, { x, y, title, position, shooting, velocity, currentObjective, isLeftSide }) => {
+                const player = createPlayer(this, x, y, title, teamConfig.color, position, shooting, velocity, currentObjective, isLeftSide).play('skating');
                 playersAcc.push(player);
                 return playersAcc;
             }, [] as Types.Physics.Arcade.SpriteWithDynamicBody[]);
@@ -166,11 +166,11 @@ export class Hockey extends Scene {
                         break;
                     case CommonObjective.MoveToPosition:
                         runAttack(this.physics, player, this.players, this.puck);
-                        this.physics.moveTo(player, centerX, centerY, speed);
+                        this.physics.moveTo(player, centerX, centerY, speed * 1.5);
                         break;
                     case CommonObjective.MoveWithPuckToPosition:
                         runAttack(this.physics, player, this.players, this.puck);
-                        this.physics.moveTo(player, centerX, centerY, speed * 0.8);
+                        this.physics.moveTo(player, centerX, centerY, speed * 0.4);
                         break;
                 }
             });
@@ -254,6 +254,7 @@ function createPlayer(
     title: string,
     color: number,
     position: Position,
+    shooting: number,
     velocity?: number,
     currentObjective?: CommonObjective | undefined,
     isLeftSide?: boolean
@@ -262,7 +263,7 @@ function createPlayer(
         .setTint(color)
         .setScale(0.8)
         .setBounce(0.4)
-        .setData({ title, position, velocity, currentObjective, isLeftSide: !!isLeftSide });
+        .setData({ title, position, shooting, velocity, currentObjective, isLeftSide: !!isLeftSide });
 
     return player.setCircle(PLAYER_SIZE, player.width + 4, player.height + 6);
 }

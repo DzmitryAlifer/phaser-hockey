@@ -4,7 +4,7 @@ import { CommonObjective, Position } from './types';
 import { POSITION_OFFENSIVE } from './position';
 
 function isWorthShooting(player: Types.Physics.Arcade.SpriteWithDynamicBody): boolean {
-    return scoringChance(player) > 0.1;
+    return scoringChance(player) > 0.5;
 }
 
 function scoringChance(player: Types.Physics.Arcade.SpriteWithDynamicBody): number {
