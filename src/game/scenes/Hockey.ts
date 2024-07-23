@@ -21,7 +21,7 @@ export class Hockey extends Scene {
     }
 
     preload() {
-        this.load.image('rink', 'assets/rink_texture.jpg');
+        // this.load.image('rink', 'assets/rink_texture.jpg');
         this.load.image('puck', 'assets/puck.png');
         this.load.image('player', 'assets/player-idle.png');
         hockeyScene = this.scene;
@@ -158,11 +158,9 @@ export class Hockey extends Scene {
                         this.puck.setPosition(stick.x, stick.y).setData({ owner: player.getData('title') });
                         this.isAttackInProgress = false;
                         break;
-                    case CommonObjective.MoveWithPuck:
-                        const playerWithPuck = this.players.find(player => player.getData('title') === puckOwner)
-                        if (!playerWithPuck) break;
-                        this.puck.setVelocity(0).setPosition(stick.x, stick.y);
-                        runAttack(this.physics, playerWithPuck, this.players, this.puck);
+                    case CommonObjective.MoveToPosition:
+                    case CommonObjective.MoveWithPuckToPosition:
+                        runAttack(this.physics, player, this.players, this.puck);
                         break;
                 }
             });

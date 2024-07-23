@@ -68,7 +68,7 @@ export function pass(
     targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
     puck.setData({ owner: null });
     physics.moveTo(puck, x, y, 500);
-    playerWithPuck.setData({ currentObjective: null });
+    playerWithPuck.setData({ currentObjective: CommonObjective.MoveWithPuckToPosition });
 }
 
 function moveWithPuck(
@@ -82,7 +82,7 @@ function moveWithPuck(
     let { centerX, centerY } = POSITION_OFFENSIVE.get(position)!;
     if (!isLeftTeam) centerX *= -1;
     physics.moveTo(player, centerX, centerY, speed);
-    player.setData('currentObjective', CommonObjective.MoveWithPuck);
+    player.setData('currentObjective', CommonObjective.MoveWithPuckToPosition);
 }
 
 function move(
@@ -95,7 +95,7 @@ function move(
     let { centerX, centerY } = POSITION_OFFENSIVE.get(position)!;
     if (!isLeftTeam) centerX *= -1;
     physics.moveTo(player, centerX, centerY, speed);
-    player.setData('currentObjective', CommonObjective.Move);
+    player.setData('currentObjective', CommonObjective.MoveToPosition);
 }
 
 export function runAttack(
