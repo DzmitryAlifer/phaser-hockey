@@ -1,7 +1,7 @@
 import { Game, GameObjects, Geom, Physics, Scene, Scenes, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE, TEAMS } from '../constants';
 import { CommonObjective, Position } from '../types';
-import { catchPuck, findPassCandidate, pass, runAttack, setPlayerStickPosition } from '../strategy';
+import { catchPuck, runAttack, setPlayerStickPosition } from '../strategy';
 import { POSITION_OFFENSIVE } from '../position';
 
 export let hockeyScene: Scenes.ScenePlugin;
@@ -18,11 +18,11 @@ export class Hockey extends Scene {
     private isAttackInProgress = false;
 
     constructor() {
-        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
+        super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
     }
 
     preload() {
-        // this.load.image('rink', 'assets/rink_texture.jpg');
+        this.load.image('rink', 'assets/rink_texture.jpg');
         this.load.image('puck', 'assets/puck.png');
         this.load.image('player', 'assets/player-idle.png');
         hockeyScene = this.scene;

@@ -80,6 +80,8 @@ export function runAttack(
     players: Types.Physics.Arcade.SpriteWithDynamicBody[],
     puck: Types.Physics.Arcade.ImageWithDynamicBody
 ): void {
+    if (puck.getData('owner') !== player.getData('title')) return;
+
     if (isWorthShooting(player)) {
         shoot(physics, player, puck);
     } else if (isWorthPassing(player, players)) {
