@@ -2,6 +2,7 @@ import { Game, GameObjects, Geom, Physics, Scene, Scenes, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE, TEAMS } from '../constants';
 import { CommonObjective, Position } from '../types';
 import { catchPuck, findPassCandidate, pass, runAttack, setPlayerStickPosition } from '../strategy';
+import { POSITION_OFFENSIVE } from '../position';
 
 export let hockeyScene: Scenes.ScenePlugin;
 let velocityX = 0;
@@ -151,6 +152,11 @@ export class Hockey extends Scene {
                 const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
                 const puckOwner = this.puck.getData('owner');
                 const stick = player.getData('stick');
+                const speed = player.getData('velocity');
+                const isLeftTeam = player.getData('isLeftSide');
+                const position = player.getData('position');
+                let { centerX, centerY } = POSITION_OFFENSIVE.get(position)!;
+                if (!isLeftTeam) centerX *= -1;
 
                 switch (player.getData('currentObjective')) {
                     case CommonObjective.TakePass:
@@ -159,8 +165,12 @@ export class Hockey extends Scene {
                         this.isAttackInProgress = false;
                         break;
                     case CommonObjective.MoveToPosition:
+                        runAttack(this.physics, player, this.players, this.puck);
+                        this.physics.moveTo(player, centerX, centerY, speed);
+                        break;
                     case CommonObjective.MoveWithPuckToPosition:
                         runAttack(this.physics, player, this.players, this.puck);
+                        this.physics.moveTo(player, centerX, centerY, speed * 0.8);
                         break;
                 }
             });
