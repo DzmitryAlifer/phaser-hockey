@@ -54,6 +54,7 @@ export const TEAMS: TeamConfig[] = [{
             velocity: 30,
             shooting: 100,
             isLeftSide: true,
+            shotBlocking: 50,
         },
         {
             title: 'TeamA - 2',
@@ -64,6 +65,7 @@ export const TEAMS: TeamConfig[] = [{
             shooting: 100,
             currentObjective: CommonObjective.CatchPuck,
             isLeftSide: true,
+            shotBlocking: 50,
         },
     ],
 }, {
@@ -76,6 +78,7 @@ export const TEAMS: TeamConfig[] = [{
             y: -100,
             velocity: 0,
             shooting: 30,
+            shotBlocking: 50,
         },
         {
             title: 'TeamB - 2',
@@ -84,6 +87,7 @@ export const TEAMS: TeamConfig[] = [{
             y: 120,
             velocity: 0,
             shooting: 30,
+            shotBlocking: 50,
         },
         {
             title: 'TeamB - 3',
@@ -92,6 +96,7 @@ export const TEAMS: TeamConfig[] = [{
             y: -50,
             velocity: 0,
             shooting: 30,
+            shotBlocking: 50,
         }
     ],
 }];

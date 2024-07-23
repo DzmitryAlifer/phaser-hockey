@@ -16,6 +16,7 @@ export interface PlayerConfig {
     position: Position;
     velocity: number;
     shooting: number;
+    shotBlocking: number;
     currentObjective?: CommonObjective;
     isLeftSide?: boolean;
 }

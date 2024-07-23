@@ -114,8 +114,8 @@ export class Hockey extends Scene {
             .setBounce(0.8);
         
         this.teams = TEAMS.reduce((teamsAcc, teamConfig) => {
-            const players = teamConfig.playerConfigs.reduce((playersAcc, { x, y, title, position, shooting, velocity, currentObjective, isLeftSide }) => {
-                const player = createPlayer(this, x, y, title, teamConfig.color, position, shooting, velocity, currentObjective, isLeftSide).play('skating');
+            const players = teamConfig.playerConfigs.reduce((playersAcc, { x, y, title, position, shooting, shotBlocking, velocity, currentObjective, isLeftSide }) => {
+                const player = createPlayer(this, x, y, title, teamConfig.color, position, shooting, shotBlocking, velocity, currentObjective, isLeftSide).play('skating');
                 playersAcc.push(player);
                 return playersAcc;
             }, [] as Types.Physics.Arcade.SpriteWithDynamicBody[]);
@@ -261,6 +261,7 @@ function createPlayer(
     color: number,
     position: Position,
     shooting: number,
+    shotBlocking: number,
     velocity?: number,
     currentObjective?: CommonObjective | undefined,
     isLeftSide?: boolean
