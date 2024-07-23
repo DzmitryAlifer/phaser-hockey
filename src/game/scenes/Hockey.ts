@@ -132,7 +132,10 @@ export class Hockey extends Scene {
     }
 
     override update() {
-        this.players.forEach(setPlayerStickPosition);
+        this.players.forEach((player, i) => {
+            setPlayerStickPosition(player);
+            this.playerTitles.at(i)?.setPosition(player.x, player.y);
+        });
 
         if (!this.isAttackInProgress) {
             let playerWithPuck = this.players.find(player => player.getData('title') === this.puck.getData('owner'));
