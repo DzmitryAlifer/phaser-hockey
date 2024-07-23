@@ -23,7 +23,6 @@ export class Hockey extends Scene {
     preload() {
         this.load.image('rink', 'assets/rink_texture.jpg');
         this.load.image('puck', 'assets/puck.png');
-        this.load.image('net', 'assets/net2.png');
         this.load.image('player', 'assets/player-idle.png');
         hockeyScene = this.scene;
         this.load.atlas('hockey-player', 'assets/hockey-player-sprites.png', 'assets/hockey-player.json');
@@ -132,43 +131,42 @@ export class Hockey extends Scene {
     }
 
     override update() {
-        // TODO: 1. cathPuck() 2. runAttack() 3. players.forEach()
-        const playerWithPuck = catchPuck(this.physics, this.players, this.puck);
+        this.players.forEach(setPlayerStickPosition);
 
-        if (playerWithPuck) {
-            runAttack(this.physics, playerWithPuck, this.players, this.puck);
-
-            // this.players.forEach((player, i) => {
-            //     const playerAngle = Phaser.Math.DegToRad(player.angle + 62);
-            //     const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(playerAngle);
-            //     const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(playerAngle);
-            //     player.setData({ stick: { x: stickPosX, y: stickPosY } });
-
-            //     const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
-            //     const puckOwner = this.puck.getData('owner');
-
-            //     if (isPuckTooFar && !puckOwner) {
-            //         player.setRotation(Math.atan2(this.puck.y - player.y, this.puck.x - player.x));
-            //         const velocity = player.getData('velocity');
-            //         this.physics.moveTo(player, this.puck.x, this.puck.y, velocity);
-            //     } else if (!puckOwner) {
-            //         player.setVelocity(0)
-            //             .play('idle')
-            //             .setData({ hasPuck: true, currentObjective: CommonObjective.GivePass });
-            //         this.puck.setVelocity(0)
-            //             .setPosition(stickPosX, stickPosY)
-            //             .setData({ owner: player.getData('title') });
-            //     } else if (!isPuckTooFar && !puckOwner) {
-            //         this.puck.setVelocity(0)
-            //             .setPosition(stickPosX, stickPosY)
-            //             .setData({ owner: player.getData('title') });
-            //     } else {
-            //         player.setVelocity(0).play('idle');
-            //     }
-            // });
-
+        if (!this.isAttackInProgress) {
+            let playerWithPuck = this.players.find(player => player.getData('title') === this.puck.getData('owner'));
+            
+            if (!playerWithPuck) {
+                playerWithPuck = catchPuck(this.physics, this.players, this.puck)!;
+            }
+            
+            if (playerWithPuck) {
+                this.isAttackInProgress = true;
+                runAttack(this.physics, playerWithPuck, this.players, this.puck);
+            }
         }
+        
+        if (this.isAttackInProgress) {
+            this.players.forEach((player, i) => {
+                const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
+                const puckOwner = this.puck.getData('owner');
+                const stick = player.getData('stick');
 
+                switch (player.getData('currentObjective')) {
+                    case CommonObjective.TakePass:
+                        if (isPuckTooFar || puckOwner) break;
+                        this.puck.setPosition(stick.x, stick.y).setData({ owner: player.getData('title') });
+                        this.isAttackInProgress = false;
+                        break;
+                    case CommonObjective.MoveWithPuck:
+                        const playerWithPuck = this.players.find(player => player.getData('title') === puckOwner)
+                        if (!playerWithPuck) break;
+                        this.puck.setVelocity(0).setPosition(stick.x, stick.y);
+                        runAttack(this.physics, playerWithPuck, this.players, this.puck);
+                        break;
+                }
+            });
+        }
        
         const isScoreToLeftNet = Geom.Intersects.PointToLine(new Geom.Point(this.puck.x + PUCK_RADIUS / 2, this.puck.y), this.goalLineLeft, PUCK_RADIUS);
         const isScoreToRightNet = Geom.Intersects.PointToLine(new Geom.Point(this.puck.x - PUCK_RADIUS / 2, this.puck.y), this.goalLineRight, PUCK_RADIUS);

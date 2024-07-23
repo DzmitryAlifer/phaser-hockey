@@ -65,7 +65,7 @@ export function pass(
 ): void {
     if (playerWithPuck.getData('title') === targetPlayer.getData('title')) return;
     const { x, y } = targetPlayer.getData('stick');
-    targetPlayer.setData({ currentObjective: null });
+    targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
     puck.setData({ owner: null });
     physics.moveTo(puck, x, y, 500);
     playerWithPuck.setData({ currentObjective: null });
@@ -82,6 +82,20 @@ function moveWithPuck(
     let { centerX, centerY } = POSITION_OFFENSIVE.get(position)!;
     if (!isLeftTeam) centerX *= -1;
     physics.moveTo(player, centerX, centerY, speed);
+    player.setData('currentObjective', CommonObjective.MoveWithPuck);
+}
+
+function move(
+    physics: Physics.Arcade.ArcadePhysics,
+    player: Types.Physics.Arcade.SpriteWithDynamicBody
+): void {
+    const speed = player.getData('velocity');
+    const isLeftTeam = player.getData('isLeftSide');
+    const position = player.getData('position');
+    let { centerX, centerY } = POSITION_OFFENSIVE.get(position)!;
+    if (!isLeftTeam) centerX *= -1;
+    physics.moveTo(player, centerX, centerY, speed);
+    player.setData('currentObjective', CommonObjective.Move);
 }
 
 export function runAttack(
@@ -95,6 +109,7 @@ export function runAttack(
     } else if (isWorthPassing(player, players)) {
         const targetPlayer = findPassCandidate(player, players)!;
         pass(physics, puck, player, targetPlayer);
+        move(physics, player);
     } else if (isWorthMovingWithPuck(player)) {
         moveWithPuck(physics, player, puck);
     } else {

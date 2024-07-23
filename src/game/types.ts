@@ -1,5 +1,7 @@
 export enum CommonObjective {
     CatchPuck,
+    Move,
+    MoveWithPuck,
     GivePass,
     TakePass,
 }
