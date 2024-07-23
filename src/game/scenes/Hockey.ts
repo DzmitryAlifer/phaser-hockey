@@ -147,7 +147,7 @@ export class Hockey extends Scene {
         }
         
         if (this.isAttackInProgress) {
-            this.players.forEach((player, i) => {
+            this.players.forEach(player => {
                 const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
                 const puckOwner = this.puck.getData('owner');
                 const stick = player.getData('stick');
