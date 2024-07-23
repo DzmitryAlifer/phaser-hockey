@@ -166,13 +166,13 @@ export class Hockey extends Scene {
                         this.isAttackInProgress = false;
                         break;
                     case CommonObjective.MoveToPosition:
-                        runAttack(this.physics, player, this.players, this.puck);
                         this.physics.moveTo(player, centerX, centerY, speed * 1.5);
+                        runAttack(this.physics, player, this.players, this.puck);
                         break;
                     case CommonObjective.MoveWithPuckToPosition:
-                        runAttack(this.physics, player, this.players, this.puck);
                         this.physics.moveTo(player, centerX, centerY, speed * 0.5);
                         this.puck.setPosition(stick.x, stick.y).setData({ owner: playerTitle });
+                        runAttack(this.physics, player, this.players, this.puck);
                         break;
                     default:
                         player.setData({ currentObjective: CommonObjective.MoveToPosition });

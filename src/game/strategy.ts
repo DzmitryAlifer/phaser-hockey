@@ -71,7 +71,7 @@ export function pass(
     targetPlayer.setData({ currentObjective: CommonObjective.TakePass });
     puck.setData({ owner: null });
     physics.moveTo(puck, x, y, 500);
-    playerWithPuck.setData({ currentObjective: CommonObjective.MoveWithPuckToPosition });
+    playerWithPuck.setData({ currentObjective: CommonObjective.MoveToPosition });
 }
 
 export function runAttack(
@@ -136,9 +136,6 @@ export function catchPuck(
         physics.moveTo(player, puck.x, puck.y, velocity);
         return null;
     } else if (!puckOwner) {
-        player.setVelocity(0)
-            .play('idle')
-            .setData({ hasPuck: true, currentObjective: CommonObjective.GivePass });
         puck.setVelocity(0)
             .setPosition(stickPosX, stickPosY)
             .setData({ owner: player.getData('title') });
