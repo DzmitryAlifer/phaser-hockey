@@ -151,6 +151,7 @@ export class Hockey extends Scene {
             this.players.forEach(player => {
                 const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, this.puck.x, this.puck.y) > 35;
                 const puckOwner = this.puck.getData('owner');
+                const playerTitle = player.getData('title');
                 const stick = player.getData('stick');
                 const speed = player.getData('velocity');
                 const isLeftTeam = player.getData('isLeftSide');
@@ -161,7 +162,7 @@ export class Hockey extends Scene {
                 switch (player.getData('currentObjective')) {
                     case CommonObjective.TakePass:
                         if (isPuckTooFar || puckOwner) break;
-                        this.puck.setPosition(stick.x, stick.y).setData({ owner: player.getData('title') });
+                        this.puck.setPosition(stick.x, stick.y).setData({ owner: playerTitle });
                         this.isAttackInProgress = false;
                         break;
                     case CommonObjective.MoveToPosition:
@@ -171,7 +172,10 @@ export class Hockey extends Scene {
                     case CommonObjective.MoveWithPuckToPosition:
                         runAttack(this.physics, player, this.players, this.puck);
                         this.physics.moveTo(player, centerX, centerY, speed * 0.5);
+                        this.puck.setPosition(stick.x, stick.y).setData({ owner: playerTitle });
                         break;
+                    default:
+                        player.setData({ currentObjective: CommonObjective.MoveToPosition });
                 }
             });
         }

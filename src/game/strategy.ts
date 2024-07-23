@@ -19,9 +19,8 @@ function isWorthPassing(player: Types.Physics.Arcade.SpriteWithDynamicBody, play
     const partner = getPlayerInBestPosition(players);
     if (!partner) return false;
     const isCurrentPlayerInBestShootingPosition = partner.getData('title') === player.getData('title');
-    const currentPlayerScoreChance = scoringChance(player);
-    const comparablePlayerScoringChance = scoringChance(partner);
-    return !isCurrentPlayerInBestShootingPosition && (currentPlayerScoreChance * 1.0 < comparablePlayerScoringChance);
+
+    return !isCurrentPlayerInBestShootingPosition && scoringChance(player) * 1.2 < scoringChance(partner);
 }
 
 function getPlayerInBestPosition(players: Types.Physics.Arcade.SpriteWithDynamicBody[]): Types.Physics.Arcade.SpriteWithDynamicBody | undefined {
