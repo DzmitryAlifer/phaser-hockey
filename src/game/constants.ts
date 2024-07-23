@@ -71,7 +71,7 @@ export const TEAMS: TeamConfig[] = [{
     playerConfigs: [
         {
             title: 'TeamB - 1',
-            position: Position.LD,
+            position: Position.RW,
             x: 50,
             y: -100,
             velocity: 0,
@@ -79,9 +79,17 @@ export const TEAMS: TeamConfig[] = [{
         },
         {
             title: 'TeamB - 2',
-            position: Position.RD,
+            position: Position.LW,
             x: 50,
             y: 120,
+            velocity: 0,
+            shooting: 30,
+        },
+        {
+            title: 'TeamB - 3',
+            position: Position.RD,
+            x: 280,
+            y: -50,
             velocity: 0,
             shooting: 30,
         }
