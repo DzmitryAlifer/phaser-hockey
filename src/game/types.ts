@@ -25,4 +25,11 @@ export interface TeamConfig {
     color: number;
     playerConfigs: PlayerConfig[];
     isLeftSide?: boolean;
-} 
+}
+
+export interface NetPoints {
+    y: number; // middle of net y-value
+    yl: number; // left border y-value
+    yr: number; // right border y-value
+    x: number; // x-value is the same for y, yl and yr 
+}

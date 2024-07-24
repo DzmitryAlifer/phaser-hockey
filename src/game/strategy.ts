@@ -1,5 +1,5 @@
 import { Geom, Physics, Types } from 'phaser';
-import { LEFT_NET_POINT, PLAYER_SIZE, RIGHT_NET_POINT } from './constants';
+import { LEFT_NET_POINTS, PLAYER_SIZE, RIGHT_NET_POINTS } from './constants';
 import { CommonObjective, Position } from './types';
 import { POSITION_OFFENSIVE } from './position';
 
@@ -9,10 +9,15 @@ function isWorthShooting(player: Types.Physics.Arcade.SpriteWithDynamicBody): bo
 
 function scoringChance(player: Types.Physics.Arcade.SpriteWithDynamicBody): number {
     const shooting = player.getData('shooting');
-    const netPoint = player.getData('isLeftSide') ? RIGHT_NET_POINT : LEFT_NET_POINT;
-    const distance = Phaser.Math.Distance.Between(player.x, player.y, netPoint.x, netPoint.y);
+    const netPoints = player.getData('isLeftSide') ? RIGHT_NET_POINTS : LEFT_NET_POINTS;
+    const distance = Phaser.Math.Distance.Between(player.x, player.y, netPoints.x, netPoints.y);
+    // const playerCircle = 
+    // const canSeeNetCenter = Geom.Intersects.GetLineToCircle(sightLineNetCenter, playerCircle);
+    // const canSeeNetLeftPost = Geom.Intersects.GetLineToCircle(sightLineNetLeftPost, playerCircle);
+    // const canSeeNetRightPost = Geom.Intersects.GetLineToCircle(sightLineNetRightPost, playerCircle);
+    let netVisibilityReduction = 1;
 
-    return shooting / distance;
+    return shooting / distance / netVisibilityReduction;
 }
 
 function isWorthPassing(player: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): boolean {
@@ -44,7 +49,7 @@ function shoot(
     puck: Types.Physics.Arcade.ImageWithDynamicBody
 ): void {
     puck.setData({ owner: null });
-    const { x, y } = player.getData('isLeftSide') ? RIGHT_NET_POINT : LEFT_NET_POINT;
+    const { x, y } = player.getData('isLeftSide') ? RIGHT_NET_POINTS : LEFT_NET_POINTS;
     const shooting = player.getData('shooting');
     physics.moveTo(puck, x, y, shooting * 5);
     player.setData({ currentObjective: null });

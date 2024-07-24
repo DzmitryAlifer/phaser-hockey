@@ -18,7 +18,7 @@ export class Hockey extends Scene {
     private isAttackInProgress = false;
 
     constructor() {
-        super({ physics: { arcade: { debug: false }, matter: { debug: true } } });
+        super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
     }
 
     preload() {
