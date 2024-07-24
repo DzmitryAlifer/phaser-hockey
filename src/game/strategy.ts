@@ -3,21 +3,42 @@ import { LEFT_NET_POINTS, PLAYER_SIZE, RIGHT_NET_POINTS } from './constants';
 import { CommonObjective, Position } from './types';
 import { POSITION_OFFENSIVE } from './position';
 
-function isWorthShooting(player: Types.Physics.Arcade.SpriteWithDynamicBody): boolean {
-    return scoringChance(player) > 0.5;
+function isWorthShooting(
+    player: Types.Physics.Arcade.SpriteWithDynamicBody,
+    players: Types.Physics.Arcade.SpriteWithDynamicBody[]
+): boolean {
+    return scoringChance(player, players) > 0.5;
 }
 
-function scoringChance(player: Types.Physics.Arcade.SpriteWithDynamicBody): number {
+function scoringChance(
+    player: Types.Physics.Arcade.SpriteWithDynamicBody,
+    players: Types.Physics.Arcade.SpriteWithDynamicBody[]
+): number {
     const shooting = player.getData('shooting');
-    const netPoints = player.getData('isLeftSide') ? RIGHT_NET_POINTS : LEFT_NET_POINTS;
+    const isLeftSide = player.getData('isLeftSide');
+    const netPoints = isLeftSide ? RIGHT_NET_POINTS : LEFT_NET_POINTS;
     const distance = Phaser.Math.Distance.Between(player.x, player.y, netPoints.x, netPoints.y);
-    // const playerCircle = 
-    // const canSeeNetCenter = Geom.Intersects.GetLineToCircle(sightLineNetCenter, playerCircle);
-    // const canSeeNetLeftPost = Geom.Intersects.GetLineToCircle(sightLineNetLeftPost, playerCircle);
-    // const canSeeNetRightPost = Geom.Intersects.GetLineToCircle(sightLineNetRightPost, playerCircle);
-    let netVisibilityReduction = 1;
 
-    return shooting / distance / netVisibilityReduction;
+    const oppositeTeam = players.filter(player => player.getData('isLeftSide') !== isLeftSide);
+    const sightLineNetCenter = new Geom.Line(player.x, player.y, netPoints.x, netPoints.y);
+    const sightLineNetLeftPost = new Geom.Line(player.x, player.y, netPoints.x, netPoints.yl);
+    const sightLineNetRightPost = new Geom.Line(player.x, player.y, netPoints.x, netPoints.yr);
+    const cannotSeeNetCenter = isNetPartBlocked(sightLineNetCenter, oppositeTeam);
+    const cannotSeeNetLeftPost = isNetPartBlocked(sightLineNetLeftPost, oppositeTeam);
+    const cannotSeeNetRightPost = isNetPartBlocked(sightLineNetRightPost, oppositeTeam);
+
+    const netVisibility = 1 - 0.3 * (+cannotSeeNetCenter + +cannotSeeNetLeftPost + +cannotSeeNetRightPost);
+
+    return shooting * netVisibility / distance;
+}
+
+function isNetPartBlocked(sightLine: Geom.Line, oppositeTeam: Types.Physics.Arcade.SpriteWithDynamicBody[]): boolean {
+    return oppositeTeam.some(oppositePlayer => {
+        const { center, radius } = oppositePlayer.body as Physics.Arcade.Body;
+        const oppositePlayerCircle = new Geom.Circle(center.x, center.y, radius);
+        
+        return Geom.Intersects.GetLineToCircle(sightLine, oppositePlayerCircle);
+    })
 }
 
 function isWorthPassing(player: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): boolean {
@@ -25,11 +46,11 @@ function isWorthPassing(player: Types.Physics.Arcade.SpriteWithDynamicBody, play
     if (!partner) return false;
     const isCurrentPlayerInBestShootingPosition = partner.getData('title') === player.getData('title');
 
-    return !isCurrentPlayerInBestShootingPosition && scoringChance(player) * 1.2 < scoringChance(partner);
+    return !isCurrentPlayerInBestShootingPosition && scoringChance(player, players) * 1.2 < scoringChance(partner, players);
 }
 
 function getPlayerInBestPosition(players: Types.Physics.Arcade.SpriteWithDynamicBody[]): Types.Physics.Arcade.SpriteWithDynamicBody | undefined {
-    return players.reduce((acc, player) => scoringChance(player) > scoringChance(acc) ? player : acc, players.at(0)!);
+    return players.reduce((acc, player) => scoringChance(player, players) > scoringChance(acc, players) ? player : acc, players.at(0)!);
 }
 
 function isWorthMovingWithPuck(player: Types.Physics.Arcade.SpriteWithDynamicBody): boolean {
@@ -87,7 +108,7 @@ export function runAttack(
 ): void {
     if (puck.getData('owner') !== player.getData('title')) return;
 
-    if (isWorthShooting(player)) {
+    if (isWorthShooting(player, players)) {
         shoot(physics, player, puck);
     } else if (isWorthPassing(player, players)) {
         const targetPlayer = findPassCandidate(player, players)!;
