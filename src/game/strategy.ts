@@ -18,6 +18,8 @@ function scoringChance(
     const isLeftSide = player.getData('isLeftSide');
     const netPoints = isLeftSide ? RIGHT_NET_POINTS : LEFT_NET_POINTS;
     const distance = Phaser.Math.Distance.Between(player.x, player.y, netPoints.x, netPoints.y);
+    const shootingAngle = Phaser.Math.Angle.Between(player.x, player.y, netPoints.x, netPoints.y);
+    const shootingAngleRatio = Math.max(1 - shootingAngle / 100, 0.1);
 
     const oppositeTeam = players.filter(player => player.getData('isLeftSide') !== isLeftSide);
     const sightLineNetCenter = new Geom.Line(player.x, player.y, netPoints.x, netPoints.y);
@@ -26,10 +28,9 @@ function scoringChance(
     const cannotSeeNetCenter = isNetPartBlocked(sightLineNetCenter, oppositeTeam);
     const cannotSeeNetLeftPost = isNetPartBlocked(sightLineNetLeftPost, oppositeTeam);
     const cannotSeeNetRightPost = isNetPartBlocked(sightLineNetRightPost, oppositeTeam);
-
     const netVisibility = 1 - 0.3 * (+cannotSeeNetCenter + +cannotSeeNetLeftPost + +cannotSeeNetRightPost);
 
-    return shooting * netVisibility / distance;
+    return shooting * shootingAngleRatio * netVisibility / distance;
 }
 
 function isNetPartBlocked(sightLine: Geom.Line, oppositeTeam: Types.Physics.Arcade.SpriteWithDynamicBody[]): boolean {
