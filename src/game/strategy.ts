@@ -53,16 +53,27 @@ function getPlayerInBestPosition(players: Types.Physics.Arcade.SpriteWithDynamic
     return players.reduce((acc, player) => scoringChance(player, players) > scoringChance(acc, players) ? player : acc, players.at(0)!);
 }
 
-function isWorthMovingWithPuck(player: Types.Physics.Arcade.SpriteWithDynamicBody): boolean {
-    return !isOnPosition(player);
+function isWorthMovingWithPuck(player: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): boolean {
+    return !isOnPosition(player) && !isOpponentInFront(player, players);
 }
 
 function isOnPosition(player: Types.Physics.Arcade.SpriteWithDynamicBody): boolean {
     const position = player.getData('position') as Position;
     const positionRect = POSITION_OFFENSIVE.get(position);
-    const isOnPosition = Geom.Rectangle.Contains(positionRect!, player.x, player.y);
 
-    return isOnPosition;
+    return Geom.Rectangle.Contains(positionRect!, player.x, player.y);
+}
+
+function isOpponentInFront(player: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): boolean {
+    const isLeftSide = player.getData('isLeftSide');
+    const oppositeTeam = players.filter(player => player.getData('isLeftSide') !== isLeftSide);
+    console.log(player);
+    
+    return oppositeTeam.some(opponent => {
+        const isCloseToOpponent = Phaser.Math.Distance.Between(player.x, player.y, opponent.x, opponent.y) < 4 * PLAYER_SIZE;
+        const isInFront = false;
+        return isCloseToOpponent && isInFront;
+    });
 }
 
 function shoot(
@@ -115,7 +126,7 @@ export function runAttack(
         const targetPlayer = findPassCandidate(player, players)!;
         pass(physics, puck, player, targetPlayer);
         player.setData('currentObjective', CommonObjective.MoveToPosition);
-    } else if (isWorthMovingWithPuck(player)) {
+    } else if (isWorthMovingWithPuck(player, players)) {
         player.setData('currentObjective', CommonObjective.MoveWithPuckToPosition);
     } else {
         shoot(physics, player, puck);

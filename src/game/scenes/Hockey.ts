@@ -22,7 +22,7 @@ export class Hockey extends Scene {
     }
 
     preload() {
-        this.load.image('rink', 'assets/rink_texture.jpg');
+        // this.load.image('rink', 'assets/rink_texture.jpg');
         this.load.image('puck', 'assets/puck.png');
         this.load.image('player', 'assets/player-idle.png');
         hockeyScene = this.scene;
@@ -273,7 +273,7 @@ function createPlayer(
         .setAngle(isLeftSide ? 0 : 180)
         .setData({ title, position, shooting, velocity, currentObjective, isLeftSide: !!isLeftSide });
 
-    return player.setCircle(PLAYER_SIZE, player.width + 4, player.height + 6);
+    return player.setCircle(PLAYER_SIZE, player.width + PLAYER_SIZE / 3.5, player.height + PLAYER_SIZE / 3.5);
 }
 
 export const startHockey = (parent: string, velX: number, velY: number) => {

@@ -24,7 +24,7 @@ export const HALF_ZONE_OFFSET = (NET_LINE_X_OFFSET - BLUE_LINE_X_OFFSET) / 2;
 export const FACE_OFF_SPOT_SIZE = 5;
 export const BLOCK_AMOUNT = 12;
 
-export const PLAYER_SIZE = 13;
+export const PLAYER_SIZE = 14;
 export const PLAYER_TITLE_STYLE: Types.GameObjects.Text.TextStyle = {
     fontSize: 12,
     fontFamily: 'Arial',
