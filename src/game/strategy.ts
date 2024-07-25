@@ -60,8 +60,9 @@ function isWorthMovingWithPuck(player: Types.Physics.Arcade.SpriteWithDynamicBod
 function isOnPosition(player: Types.Physics.Arcade.SpriteWithDynamicBody): boolean {
     const position = player.getData('position') as Position;
     const positionRect = POSITION_OFFENSIVE.get(position);
+    const isOnPosition = Geom.Rectangle.Contains(positionRect!, player.x, player.y);
 
-    return Geom.Rectangle.Contains(positionRect!, player.x, player.y);
+    return isOnPosition;
 }
 
 function shoot(
