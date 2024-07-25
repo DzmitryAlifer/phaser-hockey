@@ -70,9 +70,10 @@ function isOpponentInFront(player: Types.Physics.Arcade.SpriteWithDynamicBody, p
     console.log(player);
     
     return oppositeTeam.some(opponent => {
-        const isCloseToOpponent = Phaser.Math.Distance.Between(player.x, player.y, opponent.x, opponent.y) < 4 * PLAYER_SIZE;
-        const isInFront = false;
-        return isCloseToOpponent && isInFront;
+        const distance = Phaser.Math.Distance.Between(player.x, player.y, opponent.x, opponent.y);
+        const mutualSpeedOfApproach = Math.sqrt(Math.pow(player.x - opponent.x, 2) + Math.pow(player.y - opponent.y, 2));
+
+        return distance < 4 * PLAYER_SIZE && mutualSpeedOfApproach > 10;
     });
 }
 
@@ -126,8 +127,14 @@ export function runAttack(
         const targetPlayer = findPassCandidate(player, players)!;
         pass(physics, puck, player, targetPlayer);
         player.setData('currentObjective', CommonObjective.MoveToPosition);
-    } else if (isWorthMovingWithPuck(player, players)) {
-        player.setData('currentObjective', CommonObjective.MoveWithPuckToPosition);
+    // } else if (isWorthMovingWithPuck(player, players)) {
+    } else if (!isOnPosition(player)) {
+        if (isOpponentInFront(player, players)) {
+            // dribble();
+            shoot(physics, player, puck);
+        } else {
+            player.setData('currentObjective', CommonObjective.MoveWithPuckToPosition);
+        }
     } else {
         shoot(physics, player, puck);
     }
