@@ -127,16 +127,13 @@ export function runAttack(
         const targetPlayer = findPassCandidate(player, players)!;
         pass(physics, puck, player, targetPlayer);
         player.setData('currentObjective', CommonObjective.MoveToPosition);
-    // } else if (isWorthMovingWithPuck(player, players)) {
-    } else if (!isOnPosition(player)) {
-        if (isOpponentInFront(player, players)) {
-            // dribble();
-            shoot(physics, player, puck);
-        } else {
-            player.setData('currentObjective', CommonObjective.MoveWithPuckToPosition);
-        }
-    } else {
+    } else if (isOnPosition(player)) {
         shoot(physics, player, puck);
+    } else if (isOpponentInFront(player, players)) {
+        shoot(physics, player, puck);
+        // dribble(physics, player, puck);
+    } else {
+        player.setData('currentObjective', CommonObjective.MoveWithPuckToPosition);
     }
 }
 
