@@ -176,6 +176,9 @@ export class Hockey extends Scene {
                         this.puck.setPosition(stick.x, stick.y).setData({ owner: playerTitle });
                         runAttack(this.physics, player, this.players, this.puck);
                         break;
+                    case CommonObjective.Dribble:
+                        
+                        break;
                     default:
                         player.setData({ currentObjective: CommonObjective.MoveToPosition });
                 }

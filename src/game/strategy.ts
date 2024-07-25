@@ -82,10 +82,10 @@ function shoot(
     player: Types.Physics.Arcade.SpriteWithDynamicBody,
     puck: Types.Physics.Arcade.ImageWithDynamicBody
 ): void {
-    puck.setData({ owner: null });
     const { x, y } = player.getData('isLeftSide') ? RIGHT_NET_POINTS : LEFT_NET_POINTS;
     const shooting = player.getData('shooting');
     physics.moveTo(puck, x, y, shooting * 5);
+    puck.setData({ owner: null });
     player.setData({ currentObjective: null });
 }
 
@@ -130,8 +130,11 @@ export function runAttack(
     } else if (isOnPosition(player)) {
         shoot(physics, player, puck);
     } else if (isOpponentInFront(player, players)) {
-        shoot(physics, player, puck);
-        // dribble(physics, player, puck);
+        if (player.getData('dribbling') > 50) {
+            player.setData('currentObjective', CommonObjective.Dribble);
+        } else {
+            shoot(physics, player, puck);
+        }
     } else {
         player.setData('currentObjective', CommonObjective.MoveWithPuckToPosition);
     }

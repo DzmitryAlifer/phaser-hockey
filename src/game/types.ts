@@ -5,6 +5,7 @@ export enum CommonObjective {
     GivePass,
     TakePass,
     Checking,
+    Dribble,
 }
 
 export enum Position { G, LD, RD, LW, RW, C }
