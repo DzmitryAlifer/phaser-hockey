@@ -114,8 +114,8 @@ export class Hockey extends Scene {
             .setBounce(0.8);
         
         this.teams = TEAMS.reduce((teamsAcc, teamConfig) => {
-            const players = teamConfig.playerConfigs.reduce((playersAcc, { x, y, title, position, shooting, shotBlocking, velocity, currentObjective, isLeftSide }) => {
-                const player = createPlayer(this, x, y, title, teamConfig.color, position, shooting, shotBlocking, velocity, currentObjective, isLeftSide).play('skating');
+            const players = teamConfig.playerConfigs.reduce((playersAcc, { x, y, title, position, shooting, dribbling, shotBlocking, velocity, currentObjective, isLeftSide }) => {
+                const player = createPlayer(this, x, y, title, teamConfig.color, position, shooting, dribbling, shotBlocking, velocity, currentObjective, isLeftSide).play('skating');
                 playersAcc.push(player);
                 return playersAcc;
             }, [] as Types.Physics.Arcade.SpriteWithDynamicBody[]);
@@ -176,8 +176,13 @@ export class Hockey extends Scene {
                         this.puck.setPosition(stick.x, stick.y).setData({ owner: playerTitle });
                         runAttack(this.physics, player, this.players, this.puck);
                         break;
-                    case CommonObjective.Dribble:
-                        
+                    case CommonObjective.GoAroundOpponent:
+                        const path = { t: 0, vec: new Phaser.Math.Vector2() };
+                        const curve = new Phaser.Curves.Spline([
+                            new Phaser.Math.Vector2(player.x, player.y),
+                        ]);
+                        this.tweens.add({ targets: path, t: 1, duration: 500, repeat: 0 });
+                        player.setData({ currentObjective: CommonObjective.Proceed });
                         break;
                     default:
                         player.setData({ currentObjective: CommonObjective.MoveToPosition });
@@ -264,6 +269,7 @@ function createPlayer(
     color: number,
     position: Position,
     shooting: number,
+    dribbling: number,
     shotBlocking: number,
     velocity?: number,
     currentObjective?: CommonObjective | undefined,
@@ -274,7 +280,7 @@ function createPlayer(
         .setScale(0.8)
         .setBounce(0.4)
         .setAngle(isLeftSide ? 0 : 180)
-        .setData({ title, position, shooting, velocity, currentObjective, isLeftSide: !!isLeftSide });
+        .setData({ title, position, shooting, dribbling, velocity, currentObjective, isLeftSide: !!isLeftSide });
 
     return player.setCircle(PLAYER_SIZE, player.width + PLAYER_SIZE / 3.5, player.height + PLAYER_SIZE / 3.5);
 }

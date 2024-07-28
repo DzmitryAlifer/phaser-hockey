@@ -131,8 +131,8 @@ export function runAttack(
     } else if (isOnPosition(player)) {
         shoot(physics, player, puck);
     } else if (isOpponentInFront(player, players)) {
-        if (player.getData('dribbling') > 50) {
-            player.setData('currentObjective', CommonObjective.Dribble);
+        if (player.getData('dribbling') > 50 && player.getData('currentObjective') !== CommonObjective.Proceed) {
+            player.setData('currentObjective', CommonObjective.GoAroundOpponent);
         } else {
             shoot(physics, player, puck);
         }

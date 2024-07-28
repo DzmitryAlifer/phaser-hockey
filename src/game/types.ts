@@ -6,6 +6,8 @@ export enum CommonObjective {
     TakePass,
     Checking,
     Dribble,
+    GoAroundOpponent,
+    Proceed,
 }
 
 export enum Position { G, LD, RD, LW, RW, C }
@@ -17,6 +19,7 @@ export interface PlayerConfig {
     position: Position;
     velocity: number;
     shooting: number;
+    dribbling: number;
     shotBlocking: number;
     currentObjective?: CommonObjective;
     isLeftSide?: boolean;
