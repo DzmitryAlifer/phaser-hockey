@@ -199,7 +199,7 @@ export class Hockey extends Scene {
                         if (!this.curve || !this.path) break;
                         this.curve.getPoint(this.path.t, this.path.vec);
                         player.setPosition(this.path.vec.x, this.path.vec.y);
-                        this.puck.setPosition(stick.x, stick.y).setData({ owner: playerTitle });
+                        this.puck.setPosition(stick.x, stick.y);
                         break;
                     default:
                         player.setData({ currentObjective: CommonObjective.MoveToPosition });
