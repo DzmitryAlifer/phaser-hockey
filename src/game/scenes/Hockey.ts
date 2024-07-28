@@ -1,7 +1,7 @@
 import { Curves, Game, GameObjects, Geom, Physics, Scene, Scenes, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE, TEAMS } from '../constants';
 import { CommonObjective, Position } from '../types';
-import { catchPuck, runAttack, setPlayerStickPosition } from '../strategy';
+import { catchPuck, rotatePlayerToPoint, runAttack, setPlayerStickPosition } from '../strategy';
 import { POSITION_OFFENSIVE } from '../position';
 
 export let hockeyScene: Scenes.ScenePlugin;
@@ -171,10 +171,12 @@ export class Hockey extends Scene {
                         break;
                     case CommonObjective.MoveToPosition:
                         this.physics.moveTo(player, centerX, centerY, speed * 1.5);
+                        rotatePlayerToPoint(player, centerX, centerY);
                         runAttack(this.physics, player, this.players, this.puck);
                         break;
                     case CommonObjective.MoveWithPuckToPosition:
                         this.physics.moveTo(player, centerX, centerY, speed * 0.5);
+                        rotatePlayerToPoint(player, centerX, centerY);
                         this.puck.setPosition(stick.x, stick.y).setData({ owner: playerTitle });
                         runAttack(this.physics, player, this.players, this.puck);
                         break;

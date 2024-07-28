@@ -182,7 +182,7 @@ export function catchPuck(
     player.setData({ stick: { x: stickPosX, y: stickPosY } });
 
     if (isPuckTooFar && !puckOwner) {
-        player.setRotation(Math.atan2(puck.y - player.y, puck.x - player.x));
+        rotatePlayerToObject(player, puck);
         const velocity = player.getData('velocity');
         physics.moveTo(player, puck.x, puck.y, velocity);
         return null;
@@ -194,5 +194,13 @@ export function catchPuck(
     }
 
     return null;
+}
+
+export function rotatePlayerToPoint(player: Types.Physics.Arcade.SpriteWithDynamicBody, x: number, y: number): void {
+    player.setRotation(Math.atan2(y - player.y, x - player.x));
+}
+
+export function rotatePlayerToObject(player: Types.Physics.Arcade.SpriteWithDynamicBody, { x, y }: { x: number; y: number }): void {
+    rotatePlayerToPoint(player, x, y);
 }
 
