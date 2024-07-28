@@ -184,12 +184,12 @@ export class Hockey extends Scene {
                         this.path = { t: 0, vec: new Phaser.Math.Vector2() };
                         this.curve = new Curves.Spline([
                             new Phaser.Math.Vector2(player.x, player.y),
-                            new Phaser.Math.Vector2(closestOpponentX, closestOpponentY - 50),
+                            new Phaser.Math.Vector2(closestOpponentX + PLAYER_SIZE, closestOpponentY - PLAYER_SIZE * 4),
                         ]);
                         this.tweens.add({
                             targets: this.path,
                             t: 1,
-                            duration: 700,
+                            duration: 1000,
                             repeat: 0,
                             onComplete: () => player.setData({ currentObjective: CommonObjective.MoveWithPuckToPosition })
                         });

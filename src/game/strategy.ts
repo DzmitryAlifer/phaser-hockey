@@ -71,9 +71,7 @@ function isOpponentInFront(player: Types.Physics.Arcade.SpriteWithDynamicBody, p
     
     const closestOpponent = oppositeTeam.find(opponent => {
         const distance = Phaser.Math.Distance.Between(player.x, player.y, opponent.x, opponent.y);
-        const mutualSpeedOfApproach = Math.sqrt(Math.pow(player.x - opponent.x, 2) + Math.pow(player.y - opponent.y, 2));
-
-        return distance < 4 * PLAYER_SIZE && mutualSpeedOfApproach > 50;
+        return distance < 4 * PLAYER_SIZE;
     });
 
     if (closestOpponent) {
