@@ -73,7 +73,7 @@ function isOpponentInFront(player: Types.Physics.Arcade.SpriteWithDynamicBody, p
         const distance = Phaser.Math.Distance.Between(player.x, player.y, opponent.x, opponent.y);
         const mutualSpeedOfApproach = Math.sqrt(Math.pow(player.x - opponent.x, 2) + Math.pow(player.y - opponent.y, 2));
 
-        return distance < 4 * PLAYER_SIZE && mutualSpeedOfApproach > 10;
+        return distance < 4 * PLAYER_SIZE && mutualSpeedOfApproach > 50;
     });
 
     if (closestOpponent) {
@@ -125,7 +125,7 @@ export function runAttack(
     players: Types.Physics.Arcade.SpriteWithDynamicBody[],
     puck: Types.Physics.Arcade.ImageWithDynamicBody
 ): void {
-    if (puck.getData('owner') !== player.getData('title')) return;
+    if (puck.getData('owner') !== player.getData('title') || player.getData('currentObjective') === CommonObjective.Proceed) return;
 
     if (isWorthShooting(player, players)) {
         shoot(physics, player, puck);
@@ -136,7 +136,7 @@ export function runAttack(
     } else if (isOnPosition(player)) {
         shoot(physics, player, puck);
     } else if (isOpponentInFront(player, players)) {
-        if (player.getData('dribbling') > 50 && player.getData('currentObjective') !== CommonObjective.Proceed) {
+        if (player.getData('dribbling') > 50) {
             player.setData({ currentObjective: CommonObjective.GoAroundOpponent });
         } else {
             shoot(physics, player, puck);
