@@ -16,6 +16,8 @@ export class Hockey extends Scene {
     private players!: Types.Physics.Arcade.SpriteWithDynamicBody[];
     private playerTitles!: GameObjects.Text[];
     private isAttackInProgress = false;
+    private curve: Curves.Spline | null = null;
+    private path: { t: number; vec: Phaser.Math.Vector2 } | null = null;
 
     constructor() {
         super({ physics: { arcade: { debug: true }, matter: { debug: true } } });
@@ -159,8 +161,6 @@ export class Hockey extends Scene {
                 const isLeftTeam = player.getData('isLeftSide');
                 const position = player.getData('position');
                 let { centerX, centerY } = POSITION_OFFENSIVE.get(position)!;
-                let curve: Curves.Spline | null = null;
-                let path: { t: number; vec: Phaser.Math.Vector2 } | null = null;
                 if (!isLeftTeam) centerX *= -1;
 
                 switch (player.getData('currentObjective')) {
@@ -181,20 +181,25 @@ export class Hockey extends Scene {
                     case CommonObjective.GoAroundOpponent:
                         const closestOpponentX = player.getData('closestOpponentX');
                         const closestOpponentY = player.getData('closestOpponentY');
-                        path = { t: 0, vec: new Phaser.Math.Vector2() };
-                        curve = new Curves.Spline([
+                        this.path = { t: 0, vec: new Phaser.Math.Vector2() };
+                        this.curve = new Curves.Spline([
                             new Phaser.Math.Vector2(player.x, player.y),
-                            new Phaser.Math.Vector2(closestOpponentX, closestOpponentY),
-                            new Phaser.Math.Vector2(centerX, centerY),
+                            new Phaser.Math.Vector2(closestOpponentX, closestOpponentY - 50),
                         ]);
-                        this.tweens.add({ targets: path, t: 1, duration: 500, repeat: 0 });
+                        this.tweens.add({
+                            targets: this.path,
+                            t: 1,
+                            duration: 700,
+                            repeat: 0,
+                            onComplete: () => player.setData({ currentObjective: CommonObjective.MoveWithPuckToPosition })
+                        });
                         player.setData({ currentObjective: CommonObjective.Proceed });
                         break;
                     case CommonObjective.Proceed:
-                        if (!curve || !path) break;
-                        path = path as { t: number; vec: Phaser.Math.Vector2 };
-                        (curve as Curves.Spline).getPoint(path.t, path.vec);
-                        player.setPosition(path.vec.x, path.vec.y);
+                        if (!this.curve || !this.path) break;
+                        this.curve.getPoint(this.path.t, this.path.vec);
+                        player.setPosition(this.path.vec.x, this.path.vec.y);
+                        this.puck.setPosition(stick.x, stick.y).setData({ owner: playerTitle });
                         break;
                     default:
                         player.setData({ currentObjective: CommonObjective.MoveToPosition });
