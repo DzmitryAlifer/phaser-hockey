@@ -67,15 +67,20 @@ function isOnPosition(player: Types.Physics.Arcade.SpriteWithDynamicBody): boole
 
 function isOpponentInFront(player: Types.Physics.Arcade.SpriteWithDynamicBody, players: Types.Physics.Arcade.SpriteWithDynamicBody[]): boolean {
     const isLeftSide = player.getData('isLeftSide');
-    const oppositeTeam = players.filter(player => player.getData('isLeftSide') !== isLeftSide);
-    console.log(player);
+    const oppositeTeam = players.filter(player => player.getData('isLeftSide') !== isLeftSide)
     
-    return oppositeTeam.some(opponent => {
+    const closestOpponent = oppositeTeam.find(opponent => {
         const distance = Phaser.Math.Distance.Between(player.x, player.y, opponent.x, opponent.y);
         const mutualSpeedOfApproach = Math.sqrt(Math.pow(player.x - opponent.x, 2) + Math.pow(player.y - opponent.y, 2));
 
         return distance < 4 * PLAYER_SIZE && mutualSpeedOfApproach > 10;
     });
+
+    if (closestOpponent) {
+        player.setData({ closestOpponentX: closestOpponent.x, closestOpponentY: closestOpponent.y });
+    }
+
+    return !!closestOpponent;
 }
 
 function shoot(
@@ -132,7 +137,7 @@ export function runAttack(
         shoot(physics, player, puck);
     } else if (isOpponentInFront(player, players)) {
         if (player.getData('dribbling') > 50 && player.getData('currentObjective') !== CommonObjective.Proceed) {
-            player.setData('currentObjective', CommonObjective.GoAroundOpponent);
+            player.setData({ currentObjective: CommonObjective.GoAroundOpponent });
         } else {
             shoot(physics, player, puck);
         }

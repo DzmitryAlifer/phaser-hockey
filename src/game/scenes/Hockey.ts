@@ -1,4 +1,4 @@
-import { Game, GameObjects, Geom, Physics, Scene, Scenes, Types } from 'phaser';
+import { Curves, Game, GameObjects, Geom, Physics, Scene, Scenes, Types } from 'phaser';
 import { BLOCK_AMOUNT, BLUE_LINE_X_OFFSET, CIRCLE_RADIUS, CORNER_D, CORNER_DRAW_R, DEGREE_90, DEGREE_180, DEGREE_270, DEGREE_360, FACE_OFF_SPOT_SIZE, GOALIE_HALF_CIRCLE_RADIUS, ICE_ALPHA, ICE_BLUE, ICE_RED, NET_LINE_X_OFFSET, NET_COLOR, NET_DEPTH, NET_HALF_WIDTH, NET_WIDTH, PUCK_DIAMETER, PUCK_IMG_SIZE, PUCK_RADIUS, RADIAL_BLOCK_SHIFT, SIZE_X, SIZE_Y, BORDER_BLOCK_RADIUS, PLAYER_SIZE, PLAYER_TITLE_STYLE, TEAMS } from '../constants';
 import { CommonObjective, Position } from '../types';
 import { catchPuck, runAttack, setPlayerStickPosition } from '../strategy';
@@ -159,6 +159,8 @@ export class Hockey extends Scene {
                 const isLeftTeam = player.getData('isLeftSide');
                 const position = player.getData('position');
                 let { centerX, centerY } = POSITION_OFFENSIVE.get(position)!;
+                let curve: Curves.Spline | null = null;
+                let path: { t: number; vec: Phaser.Math.Vector2 } | null = null;
                 if (!isLeftTeam) centerX *= -1;
 
                 switch (player.getData('currentObjective')) {
@@ -177,12 +179,22 @@ export class Hockey extends Scene {
                         runAttack(this.physics, player, this.players, this.puck);
                         break;
                     case CommonObjective.GoAroundOpponent:
-                        const path = { t: 0, vec: new Phaser.Math.Vector2() };
-                        const curve = new Phaser.Curves.Spline([
+                        const closestOpponentX = player.getData('closestOpponentX');
+                        const closestOpponentY = player.getData('closestOpponentY');
+                        path = { t: 0, vec: new Phaser.Math.Vector2() };
+                        curve = new Curves.Spline([
                             new Phaser.Math.Vector2(player.x, player.y),
+                            new Phaser.Math.Vector2(closestOpponentX, closestOpponentY),
+                            new Phaser.Math.Vector2(centerX, centerY),
                         ]);
                         this.tweens.add({ targets: path, t: 1, duration: 500, repeat: 0 });
                         player.setData({ currentObjective: CommonObjective.Proceed });
+                        break;
+                    case CommonObjective.Proceed:
+                        if (!curve || !path) break;
+                        path = path as { t: number; vec: Phaser.Math.Vector2 };
+                        (curve as Curves.Spline).getPoint(path.t, path.vec);
+                        player.setPosition(path.vec.x, path.vec.y);
                         break;
                     default:
                         player.setData({ currentObjective: CommonObjective.MoveToPosition });
