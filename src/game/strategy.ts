@@ -162,9 +162,9 @@ export function findPlayerClosestToPuck(
 }
 
 export function setPlayerStickPosition(player: Types.Physics.Arcade.SpriteWithDynamicBody): void {
-    const playerAngle = Phaser.Math.DegToRad(player.angle + 62);
-    const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(playerAngle);
-    const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(playerAngle);
+    const stickAngle = Phaser.Math.DegToRad(player.angle + 62);
+    const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(stickAngle);
+    const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(stickAngle);
     player.setData({ stick: { x: stickPosX, y: stickPosY } });
 }
 
@@ -176,9 +176,9 @@ export function catchPuck(
     const player = findPlayerClosestToPuck(players, puck);
     const isPuckTooFar = Phaser.Math.Distance.Between(player.x, player.y, puck.x, puck.y) > 35;
     const puckOwner = puck.getData('owner');
-    const playerAngle = Phaser.Math.DegToRad(player.angle + 62);
-    const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(playerAngle);
-    const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(playerAngle);
+    const stickAngle = Phaser.Math.DegToRad(player.angle + 62);
+    const stickPosX = player.x + PLAYER_SIZE * 2.5 * Math.cos(stickAngle);
+    const stickPosY = player.y + PLAYER_SIZE * 2.5 * Math.sin(stickAngle);
     player.setData({ stick: { x: stickPosX, y: stickPosY } });
 
     if (isPuckTooFar && !puckOwner) {
